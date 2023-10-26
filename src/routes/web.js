@@ -1,6 +1,6 @@
 import express from "express";
 import homeController from "../controller/homeController";
-const router = express.Router();
+const router = express.Router(); // bằng app = express();
 /**
  *
  * @param {*} app : express app
@@ -11,8 +11,9 @@ const handleAbout = (req, res) => {
   return res.send("this is about");
 };
 const initWebRoutes = (app) => {
-  router.get("/", homeController.handleHome);
-  router.get("/user", homeController.handleUser);
+  // path và controller
+  app.get("/", homeController.handleHome);
+  router.post("/user", homeController.handleUser);
   return app.use("/", router);
 };
 
