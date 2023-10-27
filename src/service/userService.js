@@ -14,31 +14,23 @@ const hashPassWord = (userPassWord) => {
   return bcrypt.hashSync(userPassWord, salt);
 };
 
-const createNewUser = (email, passWord, userName) => {
+const createNewUser = async (email, passWord, userName) => {
   let CheckHashPass = hashPassWord(passWord);
-  connection.query(
-    `insert into users(email,passWord,userName) values(?,?,?)`,
-    [email, CheckHashPass, userName],
-    function (err, results, fields) {
-      if (err) {
-        console.log(err);
-      }
-      console.log(results);
-    }
+  // ---------connect to mysql
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    database: "jwt",
+    Promise: bluebird,
+  });
+  // query database
+  const [rows, fields] = await connection.execute(
+    "insert into users(email,passWord,userName) values(?,?,?)",
+    [email, CheckHashPass, userName]
   );
 };
 
 const getUserList = async () => {
-  let users = [];
-  // connection.query(`select * from users`, function (err, results, fields) {
-  //   if (err) {
-  //     console.log(err);
-  //     return users;
-  //   }
-  //   users = results;
-  //   return users;
-  // });
-
   // ---------connect to mysql
   const connection = await mysql.createConnection({
     host: "localhost",
