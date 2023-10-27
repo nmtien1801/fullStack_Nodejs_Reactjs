@@ -10,9 +10,9 @@
 </head>
 
 <body>
-      <form method="POST" action="/user">
-            <div class="container">
-                  <div class="row">
+      <div class="container">
+            <div class="row">
+                  <form method="POST" action="/user">
                         <div>
                               <h3>create user new</h3>
                         </div>
@@ -31,9 +31,42 @@
                               <input type="text" class="form-control" id="userName" name="userName">
                         </div>
                         <div><button type="submit" class="btn btn-primary">Submit</button></div>
+                  </form>
+                  <div>
+                        <table class="table table-hover table-bordered">
+                              <thead>
+                                    <tr>
+                                          <th scope="col">STT</th>
+                                          <th scope="col">email</th>
+                                          <th scope="col">userName</th>
+                                          <th scope="col">action</th>
+                                    </tr>
+                              </thead>
+                              <tbody>
+                                    <% userList.forEach(function(item,index){ %>
+                                          <tr>
+                                                <th scope="row">
+                                                      <%= index+1 %>
+                                                </th>
+                                                <td>
+                                                      <%= JSON.stringify(item.email)%>
+                                                </td>
+                                                <td>
+                                                      <%= JSON.stringify(item.userName)%>
+                                                </td>
+                                                <td>
+                                                      <button type="button" class="btn btn-warning">Edit</button>
+                                                      <button type="button" class="btn btn-danger">Delete</button>
+                                                </td>
+                                          </tr>
+                                          <% }) %>
+
+
+                              </tbody>
+                        </table>
                   </div>
             </div>
-      </form>
+      </div>
 </body>
 
 </html>

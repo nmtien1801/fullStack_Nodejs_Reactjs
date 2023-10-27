@@ -1,15 +1,17 @@
 import userService from "../service/userService";
 
-const handleHome = (req, res) => {
+const handleHome = async (req, res) => {
   //   return res.send("hello home");
-  return res.render("home.ejs");
+  let userList = await userService.getUserList();
+  return res.render("home.ejs",{userList});
 };
 
 const handleUser = (req, res) => {
   let email = req.body.email;
   let passWord = req.body.passWord;
   let userName = req.body.userName;
-  userService.createNewUser(email, passWord, userName);
+  // userService.createNewUser(email, passWord, userName);
+
   return res.render("user.ejs");
 };
 module.exports = {
