@@ -36,7 +36,7 @@
                         <table class="table table-hover table-bordered">
                               <thead>
                                     <tr>
-                                          <th scope="col">STT</th>
+                                          <th scope="col">ID</th>
                                           <th scope="col">email</th>
                                           <th scope="col">userName</th>
                                           <th scope="col">action</th>
@@ -46,7 +46,7 @@
                                     <% userList.forEach(function(item,index){ %>
                                           <tr>
                                                 <th scope="row">
-                                                      <%= index+1 %>
+                                                      <%= item.id %>
                                                 </th>
                                                 <td>
                                                       <%= JSON.stringify(item.email)%>
@@ -56,7 +56,10 @@
                                                 </td>
                                                 <td>
                                                       <button type="button" class="btn btn-warning">Edit</button>
-                                                      <button type="button" class="btn btn-danger">Delete</button>
+                                                      <form style="display: inline;"
+                                                            action="/delete-user/<%= item.id %>" method="POST">
+                                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                                      </form>
                                                 </td>
                                           </tr>
                                           <% }) %>

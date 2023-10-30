@@ -14,7 +14,13 @@ const handleUser = (req, res) => {
 
   return res.redirect("/");
 };
+
+const handleDeleteUser = async (req, res) => {
+  await userService.deleteUser(req.params.id);
+  return res.redirect("/");
+};
 module.exports = {
   handleHome,
   handleUser,
+  handleDeleteUser,
 };

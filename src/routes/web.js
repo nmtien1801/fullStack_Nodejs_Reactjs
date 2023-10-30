@@ -14,6 +14,7 @@ const initWebRoutes = (app) => {
   // path và controller
   app.get("/", homeController.handleHome);
   router.post("/user", homeController.handleUser);
+  router.post("/delete-user/:id", homeController.handleDeleteUser);
   return app.use("/", router);
 };
 

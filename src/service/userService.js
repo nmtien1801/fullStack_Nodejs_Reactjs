@@ -43,7 +43,22 @@ const getUserList = async () => {
   return rows;
 };
 
+const deleteUser = async (id) => {
+  // ---------connect to mysql
+  const connection = await mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    database: "jwt",
+    Promise: bluebird,
+  });
+  // query database
+  const [rows, fields] = await connection.execute(
+    "DELETE FROM users WHERE id = ?",
+    [id]
+  );
+};
 module.exports = {
   createNewUser,
   getUserList,
+  deleteUser,
 };
