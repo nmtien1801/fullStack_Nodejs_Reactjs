@@ -55,7 +55,11 @@
                                                       <%= JSON.stringify(item.userName)%>
                                                 </td>
                                                 <td>
-                                                      <button type="button" class="btn btn-warning">Edit</button>
+                                                      <!-- <a href="/update-user/<%=item.id%>"><button type="button" class="btn btn-warning">Edit</button></a> -->
+                                                      <form style="display: inline;"
+                                                            action="/update-user/<%= item.id %>" method="POST">
+                                                            <button type="submit" class="btn btn-warning">Edit</button>
+                                                      </form>
                                                       <form style="display: inline;"
                                                             action="/delete-user/<%= item.id %>" method="POST">
                                                             <button type="submit" class="btn btn-danger">Delete</button>
