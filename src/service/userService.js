@@ -25,7 +25,7 @@ const createNewUser = async (email, passWord, userName) => {
   });
   // query database
   const [rows, fields] = await connection.execute(
-    "insert into users(email,passWord,userName) values(?,?,?)",
+    "insert into user(email,passWord,userName) values(?,?,?)",
     [email, CheckHashPass, userName]
   );
 };
@@ -39,7 +39,7 @@ const getUserList = async () => {
     Promise: bluebird,
   });
   // query database
-  const [rows, fields] = await connection.execute("select * from users");
+  const [rows, fields] = await connection.execute("select * from user");
   return rows;
 };
 
@@ -53,7 +53,7 @@ const deleteUser = async (id) => {
   });
   // query database
   const [rows, fields] = await connection.execute(
-    "DELETE FROM users WHERE id = ?",
+    "DELETE FROM user WHERE id = ?",
     [id]
   );
 };
@@ -67,7 +67,7 @@ const getUserById = async (id) => {
   });
   // query database
   const [rows, fields] = await connection.execute(
-    "SELECT * FROM users WHERE id = ?",
+    "SELECT * FROM user WHERE id = ?",
     [id]
   );
   return rows;
@@ -84,7 +84,7 @@ const UpdateUser = async (email, userName, id) => {
   // query database
 
   const [rows, fields] = await connection.execute(
-    "UPDATE users SET email = ?, userName = ? WHERE id = ?",
+    "UPDATE user SET email = ?, userName = ? WHERE id = ?",
     [email, userName, id]
   );
 };
