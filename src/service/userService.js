@@ -1,7 +1,7 @@
 import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
 import bluebird from "bluebird";
-import db from "../models/index"
+import db from "../models/index";
 // ---------connect to mysql
 // const connection = mysql.createConnection({
 //   host: "localhost",
@@ -18,72 +18,51 @@ const hashPassWord = (userPassWord) => {
 const createNewUser = async (email, passWord, userName) => {
   let CheckHashPass = hashPassWord(passWord);
   try {
-    await db.user.save({
-      userName : userName,
+    // db. - tên table - create not save(update)
+    await db.User.create({
+      userName: userName,
       email: email,
-      passWord : CheckHashPass
-    })
+      passWord: CheckHashPass,
+    });
   } catch (error) {
-    console.log(">>> check err: ",err)
+    console.log(">>> check err: ", error);
   }
 };
 
 const getUserList = async () => {
-  // ---------connect to mysql
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "jwt",
-    Promise: bluebird,
-  });
-  // query database
-  const [rows, fields] = await connection.execute("select * from user");
-  return rows;
+  //    select data from db to sequelize
+  let users = [];
+  users = await db.User.findAll();
+  return users;
 };
 
-const deleteUser = async (id) => {
-  // ---------connect to mysql
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "jwt",
-    Promise: bluebird,
+const deleteUser = async (userId) => {
+  await User.destroy({
+    where: {
+      id: userId,
+    },
   });
-  // query database
-  const [rows, fields] = await connection.execute(
-    "DELETE FROM user WHERE id = ?",
-    [id]
-  );
 };
 const getUserById = async (id) => {
-  // ---------connect to mysql
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "jwt",
-    Promise: bluebird,
+  // user đang ở kiểu obj của sequelize
+  let user = {};
+  user = await db.User.findOne({
+    where: {
+      id: id,
+    },
   });
-  // query database
-  const [rows, fields] = await connection.execute(
-    "SELECT * FROM user WHERE id = ?",
-    [id]
-  );
-  return rows;
+  //  chuyển thành obj của javascrip (kh dùng raw vì sẽ kh dùng đc các methot của sequelize)
+  return user.get({ plain: true });
 };
 
 const UpdateUser = async (email, userName, id) => {
-  // ---------connect to mysql
-  const connection = await mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    database: "jwt",
-    Promise: bluebird,
-  });
-  // query database
-
-  const [rows, fields] = await connection.execute(
-    "UPDATE user SET email = ?, userName = ? WHERE id = ?",
-    [email, userName, id]
+  await db.User.update(
+    { email: email, userName: userName },
+    {
+      where: {
+        id: id,
+      },
+    }
   );
 };
 module.exports = {
