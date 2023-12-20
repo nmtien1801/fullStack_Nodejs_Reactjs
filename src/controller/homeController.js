@@ -1,12 +1,16 @@
 import userService from "../service/userService";
 
-const handleHome = async (req, res) => {
+const handleHome = (req, res) => {
+  return res.send("hello home");
+};
+
+const handleUser = async (req, res) => {
   //   return res.send("hello home");
   let userList = await userService.getUserList();
   return res.render("home.ejs", { userList });
 };
 
-const handleUser = (req, res) => {
+const handleUserCreate = (req, res) => {
   let email = req.body.email;
   let passWord = req.body.passWord;
   let userName = req.body.userName;
@@ -25,7 +29,7 @@ const getUpdateUserPage = async (req, res) => {
   let userData = {};
   // dùng sequelize thì getById mặc định trả về 1 ptu chứ kh còn là mảng
   userData = user;
-  
+
   // if (user && user.length > 0) {
   //   userData = user[0];
   // }
@@ -41,6 +45,7 @@ const handleUpdateUser = async (req, res) => {
 module.exports = {
   handleHome,
   handleUser,
+  handleUserCreate,
   handleDeleteUser,
   getUpdateUserPage,
   handleUpdateUser,

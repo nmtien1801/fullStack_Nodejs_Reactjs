@@ -13,11 +13,12 @@ const handleAbout = (req, res) => {
 const initWebRoutes = (app) => {
   // path và controller
   app.get("/", homeController.handleHome);
-  router.post("/user", homeController.handleUser);
+  router.get("/user", homeController.handleUser);
+  router.post("/user/create", homeController.handleUserCreate);
   router.post("/delete-user/:id", homeController.handleDeleteUser);
   // router.get("/update-user/:id", homeController.getUpdateUserPage);
   router.post("/update-user/:id", homeController.getUpdateUserPage);
-  router.post("/userUpdate",homeController.handleUpdateUser);
+  router.post("/userUpdate", homeController.handleUpdateUser);
   return app.use("/", router);
 };
 
