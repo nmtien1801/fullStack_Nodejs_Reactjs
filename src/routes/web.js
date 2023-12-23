@@ -1,5 +1,7 @@
 import express from "express";
 import homeController from "../controller/homeController";
+import apiController from "../controller/apiController";
+
 const router = express.Router(); // bằng app = express();
 /**
  *
@@ -19,6 +21,11 @@ const initWebRoutes = (app) => {
   // router.get("/update-user/:id", homeController.getUpdateUserPage);
   router.post("/update-user/:id", homeController.getUpdateUserPage);
   router.post("/userUpdate", homeController.handleUpdateUser);
+
+  //rest api - dùng web sử dụng các method (CRUD)
+  //GET(R), POST (C), PUT (U), DELETE (D)
+  router.get("/api/test-api", apiController.testApi);
+
   return app.use("/", router);
 };
 

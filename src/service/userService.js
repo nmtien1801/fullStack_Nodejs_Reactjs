@@ -32,12 +32,20 @@ const createNewUser = async (email, passWord, userName) => {
 const getUserList = async () => {
   let newUser = await db.User.findOne({
     where: { id: 1 },
+    attributes: ["id", "userName", "email"], // chỉ lấy cái muốn xem
     raw: true, // trả về 1 obj
-    include: { model: db.Group }, // hiện bảng join
+    include: { model: db.Group, attributes: ["id", "name", "description"] }, // hiện bảng join
+    nest: true, // đưa bảng join vào obj
+  });
+
+  let roles = await db.Role.findAll({
+    raw: true, // trả về 1 obj
+    include: { model: db.Group, where: { id: 1 } }, // hiện bảng join
     nest: true, // đưa bảng join vào obj
   });
 
   console.log("test user new : ", newUser);
+  console.log("test role new : ", roles);
 
   //    select data from db to sequelize
   let users = [];
