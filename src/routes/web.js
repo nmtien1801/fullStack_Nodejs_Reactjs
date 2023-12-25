@@ -24,7 +24,7 @@ const initWebRoutes = (app) => {
 
   //rest api - dùng web sử dụng các method (CRUD)
   //GET(R), POST (C), PUT (U), DELETE (D)
-  router.get("/api/test-api", apiController.testApi);
+  // router.get("/api/test-api", apiController.testApi);
 
   return app.use("/", router);
 };
