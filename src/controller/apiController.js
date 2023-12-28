@@ -31,7 +31,7 @@ const handleRegister = async (req, res) => {
     res.status(200).json({
       EM: data.EM,
       EC: data.EC,
-      DT: "", // data
+      DT: data.DT, // data
     });
   } catch (error) {
     return res.status(500).json({
@@ -40,10 +40,28 @@ const handleRegister = async (req, res) => {
       DT: "", // data
     });
   }
-  console.log("call me", req.body);
+  console.log("check control register", req.body);
 };
 
+const handleLogin = async (req, res) => {
+  try {
+    let data = await loginRegisterService.handleUserLogin(req.body);
+    res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      ED: data.DT,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "error from sever", //error message
+      EC: 2, //error code
+      DT: "", // data
+    });
+  }
+  console.log("check control login", req.body);
+};
 module.exports = {
   testApi,
   handleRegister,
+  handleLogin,
 };

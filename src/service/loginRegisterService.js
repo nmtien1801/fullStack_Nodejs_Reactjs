@@ -1,6 +1,7 @@
 import db from "../models/index";
 import bcrypt from "bcryptjs";
-
+import { raw } from "body-parser";
+import { Op } from "sequelize";
 // SEARCH: sequelize
 
 const checkEmailExists = async (userEmail) => {
@@ -37,6 +38,7 @@ const registerNewUser = async (rawUserData) => {
       return {
         EM: "the email is already exists",
         EC: 1,
+        DT: "email",
       };
     }
     let isPhoneExists = await checkPhoneExists(rawUserData.phone);
@@ -47,13 +49,13 @@ const registerNewUser = async (rawUserData) => {
       };
     }
     // hash user password
-    let hassPassword = hashPassWord(rawUserData.password);
+    let CheckHashPass = hashPassWord(rawUserData.password);
     //create new user
     await db.User.create({
       email: rawUserData.email,
       phone: rawUserData.phone,
       userName: rawUserData.userName,
-      password: rawUserData.password,
+      passWord: CheckHashPass,
     });
     // không bị lỗi
     return {
@@ -69,6 +71,45 @@ const registerNewUser = async (rawUserData) => {
   }
 };
 
+const checkPassword = (userPassWord, hashPassWord) => {
+  return bcrypt.compareSync(userPassWord, hashPassWord); // true or false
+};
+
+const handleUserLogin = async (rawData) => {
+  try {
+    let user = await db.User.findOne({
+      where: {
+        [Op.or]: [{ email: rawData.valueLogin }, { phone: rawData.valueLogin }],
+      },
+    });
+    if (user) {
+      console.log(">>>>>find email or phone");
+      let isCorrectPassword = checkPassword(rawData.password, user.passWord);
+      // không bị lỗi
+      if (isCorrectPassword === true) {
+        return {
+          EM: "ok!",
+          EC: 0,
+          DT: "",
+        };
+      }
+    }
+    console.log(">>>>>not find email | phone | password");
+    return {
+      EM: "your email | phone or password is incorrect",
+      EC: 1,
+      DT: "",
+    };
+  } catch (error) {
+    console.log(">>>>check Err Login user: ", error);
+    return {
+      EM: "something wrong in service ...",
+      EC: -2,
+      DT: "",
+    };
+  }
+};
 module.exports = {
   registerNewUser,
+  handleUserLogin,
 };

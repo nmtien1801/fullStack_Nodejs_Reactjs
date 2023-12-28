@@ -44,8 +44,8 @@ const getUserList = async () => {
     nest: true, // đưa bảng join vào obj
   });
 
-  console.log("test user new : ", newUser);
-  console.log("test role new : ", roles);
+  console.log("test class User new : ", newUser);
+  console.log("test class Role new : ", roles);
 
   //    select data from db to sequelize
   let users = [];
