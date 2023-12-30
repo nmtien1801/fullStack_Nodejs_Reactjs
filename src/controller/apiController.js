@@ -28,7 +28,7 @@ const handleRegister = async (req, res) => {
     // service: create user
     let data = await loginRegisterService.registerNewUser(req.body);
 
-    res.status(200).json({
+    return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
       DT: data.DT, // data
@@ -46,7 +46,7 @@ const handleRegister = async (req, res) => {
 const handleLogin = async (req, res) => {
   try {
     let data = await loginRegisterService.handleUserLogin(req.body);
-    res.status(200).json({
+    return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
       ED: data.DT,
