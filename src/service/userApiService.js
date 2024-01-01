@@ -30,6 +30,33 @@ const getAllUser = async () => {
   }
 };
 
+const getUserWithPagination = async (page, limit) => {
+  try {
+    let offset = (page - 1) * limit;
+    let { count, rows } = await db.User.findAndCountAll({
+      offset: offset,
+      limit: limit,
+    });
+    let totalPage = Math.ceil(count / limit);
+    let data = {
+      totalRows: count,
+      totalPage: totalPage,
+      users: rows,
+    };
+    return {
+      EM: "fetch data success", //error message
+      EC: 0, //error code
+      DT: data, // data
+    };
+  } catch (error) {
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 const createNewUser = () => {};
 
 const updateUser = () => {};
@@ -40,4 +67,5 @@ module.exports = {
   createNewUser,
   updateUser,
   deleteUser,
+  getUserWithPagination,
 };
