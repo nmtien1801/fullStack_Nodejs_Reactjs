@@ -42,7 +42,7 @@ const registerNewUser = async (rawUserData) => {
       };
     }
     let isPhoneExists = await checkPhoneExists(rawUserData.phone);
-    if (isEmailExists === true) {
+    if (isPhoneExists === true) {
       return {
         EM: "the phone is already exists",
         EC: 1,
@@ -112,4 +112,7 @@ const handleUserLogin = async (rawData) => {
 module.exports = {
   registerNewUser,
   handleUserLogin,
+  hashPassWord,
+  checkEmailExists,
+  checkPhoneExists
 };

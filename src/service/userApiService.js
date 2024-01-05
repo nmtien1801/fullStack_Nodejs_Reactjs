@@ -1,5 +1,9 @@
 import db from "../models/index";
-
+import {
+  hashPassWord,
+  checkEmailExists,
+  checkPhoneExists,
+} from "./loginRegisterService";
 const getAllUser = async () => {
   try {
     let users = await db.User.findAll({
@@ -40,6 +44,7 @@ const getUserWithPagination = async (page, limit) => {
       raw: true, // trả về 1 obj
       include: { model: db.Group, attributes: ["id", "name", "description"] }, // hiện bảng join
       nest: true, // đưa bảng join vào obj
+      order: [["id", "ASC"]],
     });
     let totalPage = Math.ceil(count / limit);
     let data = {
@@ -61,9 +66,29 @@ const getUserWithPagination = async (page, limit) => {
   }
 };
 
-const createNewUser = async(data) => {
+const createNewUser = async (data) => {
   try {
-    await db.User.create(data)
+    //check email, phone
+    let isEmailExists = await checkEmailExists(data.email);
+    if (isEmailExists === true) {
+      return {
+        EM: "the email is already exists",
+        EC: 1,
+        DT: "email", // bôi đỏ lại input bị sai
+      };
+    }
+    let isPhoneExists = await checkPhoneExists(data.phone);
+    if (isPhoneExists === true) {
+      return {
+        EM: "the phone is already exists",
+        EC: 1,
+        DT: "phone",
+      };
+    }
+    // hash user password
+    let CheckHashPass = hashPassWord(data.password);
+    // create new user from modalUser
+    await db.User.create({ ...data, passWord: CheckHashPass });
     return {
       EM: "create user success", //error message
       EC: 0, //error code
