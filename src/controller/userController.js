@@ -33,7 +33,8 @@ const read = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    let data = await userApiService.getAllUser();
+    //validate(chua lam)
+    let data = await userApiService.createNewUser(req.body);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
