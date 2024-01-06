@@ -50,7 +50,8 @@ const create = async (req, res) => {
 };
 const update = async (req, res) => {
   try {
-    let data = await userApiService.getAllUser();
+    // valid chưa làm
+    let data = await userApiService.updateUser(req.body);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -71,7 +72,7 @@ const remove = async (req, res) => {
       EM: data.EM,
       EC: data.EC,
       DT: data.DT, // data
-    }); 
+    });
   } catch (error) {
     return res.status(500).json({
       EM: "error from sever", //error message

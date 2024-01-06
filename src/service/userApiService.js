@@ -40,7 +40,7 @@ const getUserWithPagination = async (page, limit) => {
     let { count, rows } = await db.User.findAndCountAll({
       offset: offset,
       limit: limit,
-      attributes: ["id", "userName", "email", "phone", "sex"], // chỉ lấy cái muốn xem
+      attributes: ["id", "userName", "email", "phone", "sex", "address"], // chỉ lấy cái muốn xem
       raw: true, // trả về 1 obj
       include: { model: db.Group, attributes: ["id", "name", "description"] }, // hiện bảng join
       nest: true, // đưa bảng join vào obj
@@ -103,7 +103,47 @@ const createNewUser = async (data) => {
   }
 };
 
-const updateUser = () => {};
+const updateUser = async (data) => {
+  try {
+    if (!data.groupID) {
+      return {
+        EM: "error groupID emty", //error message
+        EC: 1, //error code
+        DT: "group", // data
+      };
+    }
+    let user = await db.User.findOne({
+      where: { id: data.id },
+    });
+    if (user) {
+      console.log(">>>>check user: ", user);
+      await user.update({
+        userName: data.userName,
+        address: data.address,
+        sex: data.sex,
+        groupID: data.groupID,
+      });
+      return {
+        EM: "update user success", //error message
+        EC: 0, //error code
+        DT: [], // data
+      };
+    } else {
+      return {
+        EM: "user not found", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>>check err update: ", error);
+    return {
+      EM: "some thing wrongs with service",
+      ED: 2,
+      DT: [],
+    };
+  }
+};
 
 const deleteUser = async (id) => {
   try {
