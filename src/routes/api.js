@@ -14,12 +14,18 @@ const router = express.Router(); // bằng app = express();
 const handleAbout = (req, res) => {
   return res.send("this is about");
 };
+
+const testMiddleWare = (req, res, next) => {
+  console.log(">>>>calling a midleware");
+  next();
+};
+
 const initApiRoutes = (app) => {
   //rest api - dùng web sử dụng các method (CRUD)
   //GET(R), POST (C), PUT (U), DELETE (D)
   router.get("/test-api", apiController.testApi);
   router.post("/register", apiController.handleRegister);
-  router.post("/login", apiController.handleLogin);
+  router.post("/login", testMiddleWare,apiController.handleLogin);
 
   router.get("/user/read", userController.read);
   router.post("/user/create", userController.create);

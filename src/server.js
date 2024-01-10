@@ -24,6 +24,16 @@ app.use(bodyParser.json());
 // share localHost BE & FE
 configCORS(app);
 
+// app.use((req, res, next) => {
+//   // đây là midleware(chạy từ trên xuống và xoay hoài nếu không có next)
+//   // nếu đúng authenticate thì trang web hiện (bởi next)
+//   console.log(">>>>check new request"),
+//     console.log("host: ", req.hostname),
+//     console.log("path: ", req.path),
+//     console.log("method: ", req.method);
+//   next();
+// });
+
 //-------------------------------------------------------------------------------------
 // init web router
 initWebRoutes(app);
@@ -31,6 +41,8 @@ initWebRoutes(app);
 //-------------------------------------------------------------------------------------
 initApiRoutes(app);
 
+// đây là midleware(chạy từ trên xuống và xoay hoài nếu không có next)
+// nếu đúng authenticate thì trang web hiện (bởi next) thường đặt ở giữa
 // Cannot get/(link...) -> 404 not found
 app.use((req, res) => {
   return res.send("404 not found");
