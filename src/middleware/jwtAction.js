@@ -1,14 +1,12 @@
 import jwt from "jsonwebtoken";
 
-const createJwt = () => {
+const createJwt = (payload) => {
   //   let token = jwt.sign({ name: "Tien", address: "HCM" }, process.env.JWT_SECRET);
-  let payload = { name: "Tien", address: "HCM" };
   let key = process.env.JWT_SECRET;
   let token = null;
 
   try {
     token = jwt.sign(payload, key);
-    console.log(">>>>check token : ", token);
   } catch (error) {
     console.log(">>>>>check err token: ", error);
   }

@@ -1,7 +1,10 @@
 import db from "../models/index";
 import bcrypt from "bcryptjs";
 import { raw } from "body-parser";
+import { getGroupWithRoles } from "./jwtService";
 import { Op } from "sequelize";
+import { createJwt } from "../middleware/jwtAction";
+require("dotenv").config();
 // SEARCH: sequelize
 
 const checkEmailExists = async (userEmail) => {
@@ -56,6 +59,7 @@ const registerNewUser = async (rawUserData) => {
       phone: rawUserData.phone,
       userName: rawUserData.userName,
       passWord: CheckHashPass,
+      groupID: 4, // mặc định là Guess
     });
     // không bị lỗi
     return {
@@ -83,18 +87,26 @@ const handleUserLogin = async (rawData) => {
       },
     });
     if (user) {
-      console.log(">>>>>find email or phone");
       let isCorrectPassword = checkPassword(rawData.password, user.passWord);
       // không bị lỗi
       if (isCorrectPassword === true) {
+        let groupWithRole = await getGroupWithRoles(user);
+        let payload = {
+          email: user.email,
+          groupWithRole,
+          expiresIn: process.env.JWT_EXPIRES_IN,
+        };
+        let token = createJwt(payload);
         return {
           EM: "ok!",
           EC: 0,
-          DT: "",
+          DT: {
+            access_token: token,
+            data: groupWithRole,
+          },
         };
       }
     }
-    console.log(">>>>>not find email | phone | password");
     return {
       EM: "your email | phone or password is incorrect",
       EC: 1,
@@ -114,5 +126,5 @@ module.exports = {
   handleUserLogin,
   hashPassWord,
   checkEmailExists,
-  checkPhoneExists
+  checkPhoneExists,
 };

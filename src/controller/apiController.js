@@ -52,13 +52,13 @@ const handleLogin = async (req, res) => {
       ED: data.DT,
     });
   } catch (error) {
+    console.log("check control login", req.body);
     return res.status(500).json({
       EM: "error from sever", //error message
       EC: 2, //error code
       DT: "", // data
     });
   }
-  console.log("check control login", req.body);
 };
 module.exports = {
   testApi,
