@@ -40,14 +40,16 @@ const handleRegister = async (req, res) => {
       DT: "", // data
     });
   }
-  console.log("check control register", req.body);
 };
 
 const handleLogin = async (req, res) => {
   try {
     let data = await loginRegisterService.handleUserLogin(req.body);
     // set cookie
-    res.cookie("jwt", data.DT.access_token,{httpOnly:true});
+    res.cookie("jwt", data.DT.access_token, {
+      httpOnly: true,
+      maxAge: 60 * 60 * 1000,
+    });
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,

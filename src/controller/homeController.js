@@ -5,10 +5,6 @@ const handleHome = (req, res) => {
 };
 
 const handleUser = async (req, res) => {
-  // Cookies that have not been signed
-  console.log("Cookies: ", req.cookies);
-  res.cookies("test","test cookie")
-
   //   return res.send("hello home");
   let userList = await userService.getUserList();
   return res.render("home.ejs", { userList });

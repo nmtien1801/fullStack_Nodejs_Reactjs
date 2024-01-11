@@ -15,17 +15,80 @@ const createJwt = (payload) => {
 
 const verifyToken = (token) => {
   let key = process.env.JWT_SECRET;
-  let data = null;
+  let decoded = null;
   try {
-    let decoded = jwt.verify(token, "k");
-    data = decoded;
+    decoded = jwt.verify(token, key);
   } catch (error) {
     console.log(">>>check err verify token: ", error);
   }
-  return data;
+  return decoded;
+};
+
+const nonSecurePaths = ["", "/register", "/login"]; // kh check middleware url (1)
+
+// middleware jwt check user đã đăng nhập chưa
+const checkUserJwt = (req, res, next) => {
+  if (nonSecurePaths.includes(req.path)) return next(); // kh check middleware url (2)
+  let cookies = req.cookies;
+  if (cookies && cookies.jwt) {
+    let token = cookies.jwt;
+    let decoded = verifyToken(token);
+    if (decoded) {
+      req.user = decoded; // gán thêm .user(data cookie) vào req BE nhận từ FE
+      next();
+    } else {
+      return res.status(401).json({
+        EC: -1,
+        DT: "",
+        EM: "Not authenticated the user",
+      });
+    }
+    console.log(">>> my cookies: ", cookies.jwt);
+  } else {
+    return res.status(401).json({
+      EC: -1,
+      DT: "",
+      EM: "Not authenticated the user",
+    });
+  }
+};
+
+//middleware check user có quyền không(lấy role -> ss URL)
+const checkUserPermission = (req, res, next) => {
+  if (nonSecurePaths.includes(req.path)) return next(); // kh check middleware url (2)
+  if (req.user) {
+    let email = req.user.email; // (chắc chắn hơn)-> dùng query xuống db để xem quyền -> ss roles lấy từ token
+    let roles = req.user.groupWithRole.Roles;
+    let currentUrl = req.path;
+    if (!roles && roles.length === 0) {
+      return res.status(401).json({
+        EC: -1,
+        DT: "",
+        EM: `you don't permission to access this resource`,
+      });
+    }
+    let canAccess = roles.some((item) => item.url === currentUrl); // vòng lặp some từng phần tử ss token vs path(router)
+    if (canAccess) {
+      next();
+    } else {
+      return res.status(401).json({
+        EC: -1,
+        DT: "",
+        EM: `you don't permission to access this resource`,
+      });
+    }
+  } else {
+    return res.status(401).json({
+      EC: -1,
+      DT: "",
+      EM: "Not authenticated the user",
+    });
+  }
 };
 
 module.exports = {
   createJwt,
   verifyToken,
+  checkUserJwt,
+  checkUserPermission,
 };

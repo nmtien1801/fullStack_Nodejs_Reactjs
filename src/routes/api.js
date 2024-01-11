@@ -3,6 +3,7 @@ import homeController from "../controller/homeController";
 import apiController from "../controller/apiController";
 import userController from "../controller/userController";
 import groupController from "../controller/groupController";
+import { checkUserJwt, checkUserPermission } from "../middleware/jwtAction";
 
 const router = express.Router(); // bằng app = express();
 /**
@@ -15,17 +16,14 @@ const handleAbout = (req, res) => {
   return res.send("this is about");
 };
 
-const testMiddleWare = (req, res, next) => {
-  console.log(">>>>calling a midleware");
-  next();
-};
-
 const initApiRoutes = (app) => {
+  // middleware
+  router.all("*", checkUserJwt, checkUserPermission);
+
   //rest api - dùng web sử dụng các method (CRUD)
   //GET(R), POST (C), PUT (U), DELETE (D)
-  router.get("/test-api", apiController.testApi);
   router.post("/register", apiController.handleRegister);
-  router.post("/login", testMiddleWare,apiController.handleLogin);
+  router.post("/login", apiController.handleLogin);
 
   router.get("/user/read", userController.read);
   router.post("/user/create", userController.create);
