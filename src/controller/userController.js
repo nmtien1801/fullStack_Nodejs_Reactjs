@@ -2,6 +2,7 @@ import userApiService from "../service/userApiService";
 
 const read = async (req, res) => {
   try {
+    console.log(">>>>check cookie(BE) from FE -> BE: ", req.cookies);
     if (req.query.page && req.query.limit) {
       let page = req.query.page;
       let limit = req.query.limit;

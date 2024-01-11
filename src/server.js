@@ -6,6 +6,7 @@ import configCORS from "./config/cors";
 import bodyParser from "body-parser";
 require("dotenv").config();
 import connection from "./config/connectDB";
+import cookieParser from "cookie-parser";
 
 const app = express();
 // config viewEngine
@@ -24,15 +25,8 @@ app.use(bodyParser.json());
 // share localHost BE & FE
 configCORS(app);
 
-// app.use((req, res, next) => {
-//   // đây là midleware(chạy từ trên xuống và xoay hoài nếu không có next)
-//   // nếu đúng authenticate thì trang web hiện (bởi next)
-//   console.log(">>>>check new request"),
-//     console.log("host: ", req.hostname),
-//     console.log("path: ", req.path),
-//     console.log("method: ", req.method);
-//   next();
-// });
+//config cookie-parser
+app.use(cookieParser())
 
 //-------------------------------------------------------------------------------------
 // init web router
