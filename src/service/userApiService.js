@@ -139,7 +139,7 @@ const updateUser = async (data) => {
     console.log(">>>>check err update: ", error);
     return {
       EM: "some thing wrongs with service",
-      ED: 2,
+      EC: 2,
       DT: [],
     };
   }

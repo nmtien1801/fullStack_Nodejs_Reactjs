@@ -35,6 +35,7 @@ const checkUserJwt = (req, res, next) => {
     let decoded = verifyToken(token);
     if (decoded) {
       req.user = decoded; // gán thêm .user(data cookie) vào req BE nhận từ FE
+      req.token = token; // gán thêm .token(data cookie) vào req BE nhận từ FE
       next();
     } else {
       return res.status(401).json({
@@ -55,7 +56,8 @@ const checkUserJwt = (req, res, next) => {
 
 //middleware check user có quyền không(lấy role -> ss URL)
 const checkUserPermission = (req, res, next) => {
-  if (nonSecurePaths.includes(req.path)) return next(); // kh check middleware url (2)
+  if (nonSecurePaths.includes(req.path) || req.path === "/account")
+    return next(); // kh check middleware url (2)
   if (req.user) {
     let email = req.user.email; // (chắc chắn hơn)-> dùng query xuống db để xem quyền -> ss roles lấy từ token
     let roles = req.user.groupWithRole.Roles;

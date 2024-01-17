@@ -83,9 +83,30 @@ const remove = async (req, res) => {
   }
 };
 
+const getUserAccount = async (req, res) => {
+  try {
+    return res.status(200).json({
+      EM: "ok fetch context",
+      EC: 0,
+      DT: {
+        access_token: req.token,
+        groupWithRole: req.user.groupWithRole,
+        email: req.user.email,
+        userName: req.user.userName,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "error from sever", //error message
+      EC: 2, //error code
+      DT: "", // data
+    });
+  }
+};
 module.exports = {
   read,
   create,
   update,
   remove,
+  getUserAccount,
 };
