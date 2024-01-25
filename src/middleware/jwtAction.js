@@ -6,7 +6,7 @@ const createJwt = (payload) => {
   let token = null;
 
   try {
-    token = jwt.sign(payload, key);
+    token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRES_IN }); // fix lỗi thời gian lưu token # cookies
   } catch (error) {
     console.log(">>>>>check err token: ", error);
   }
