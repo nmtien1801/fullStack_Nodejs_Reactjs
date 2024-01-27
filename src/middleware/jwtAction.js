@@ -26,12 +26,26 @@ const verifyToken = (token) => {
 
 const nonSecurePaths = ["", "/register", "/login"]; // kh check middleware url (1)
 
+const extractToken = (req) => {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.split(" ")[0] === "Bearer"
+  ) {
+    return req.headers.authorization.split(" ")[1];
+  }
+  return null;
+};
+
 // middleware jwt check user đã đăng nhập chưa
 const checkUserJwt = (req, res, next) => {
   if (nonSecurePaths.includes(req.path)) return next(); // kh check middleware url (2)
+
   let cookies = req.cookies;
-  if (cookies && cookies.jwt) {
-    let token = cookies.jwt;
+  let tokenFromHeader = extractToken(req);
+
+  if ((cookies && cookies.jwt) || tokenFromHeader) {
+    // bug vừa vào đã check quyền xác thực khi chưa login của Context
+    let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader;
     let decoded = verifyToken(token);
     if (decoded) {
       req.user = decoded; // gán thêm .user(data cookie) vào req BE nhận từ FE
@@ -45,7 +59,9 @@ const checkUserJwt = (req, res, next) => {
       });
     }
     console.log(">>> my cookies: ", cookies.jwt);
-  } else {
+  }
+  // ngược lại khi không có cookies or header thì trả ra lỗi không xác thực
+  else {
     return res.status(401).json({
       EC: -1,
       DT: "",
