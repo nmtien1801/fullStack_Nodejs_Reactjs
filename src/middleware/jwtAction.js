@@ -24,7 +24,7 @@ const verifyToken = (token) => {
   return decoded;
 };
 
-const nonSecurePaths = ["", "/register", "/login"]; // kh check middleware url (1)
+const nonSecurePaths = ["/logout", "/register", "/login"]; // kh check middleware url (1)
 
 const extractToken = (req) => {
   if (
