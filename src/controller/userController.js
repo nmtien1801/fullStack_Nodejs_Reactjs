@@ -85,6 +85,7 @@ const remove = async (req, res) => {
 
 const getUserAccount = async (req, res) => {
   try {
+    // req lấy từ context
     return res.status(200).json({
       EM: "ok fetch context",
       EC: 0,
