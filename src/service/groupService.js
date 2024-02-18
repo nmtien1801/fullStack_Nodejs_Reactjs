@@ -6,7 +6,7 @@ const getGroup = async () => {
       order: [["name", "ASC"]],
     });
     return {
-      EM: "get data success", //error message
+      EM: "get data group success", //error message
       EC: 0, //error code
       DT: data, // data
     };

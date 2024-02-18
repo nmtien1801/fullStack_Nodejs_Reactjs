@@ -14,13 +14,13 @@ const getAllUser = async () => {
     });
     if (users) {
       return {
-        EM: "get data success", //error message
+        EM: "get data user success", //error message
         EC: 0, //error code
         DT: users, // data
       };
     } else {
       return {
-        EM: "get data success", //error message
+        EM: "get data user success", //error message
         EC: 0, //error code
         DT: [], // data
       };

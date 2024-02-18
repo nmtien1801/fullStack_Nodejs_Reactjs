@@ -58,7 +58,7 @@ const checkUserJwt = (req, res, next) => {
         EM: "Not authenticated the user",
       });
     }
-    console.log(">>> my cookies: ", cookies.jwt);
+    // console.log(">>> my cookies 401: ", cookies.jwt);
   }
   // ngược lại khi không có cookies or header thì trả ra lỗi không xác thực
   else {
@@ -85,10 +85,15 @@ const checkUserPermission = (req, res, next) => {
         EM: `you don't permission to access this resource`,
       });
     }
-    let canAccess = roles.some((item) => item.url === currentUrl); // vòng lặp some từng phần tử ss token vs path(router)
+    // vòng lặp some từng phần tử ss token vs path(router)
+    // bug role/:id từ req là động -> thêm include  /:id
+    let canAccess = roles.some(
+      (item) => item.url === currentUrl || currentUrl.includes(item.url)
+    );
     if (canAccess) {
       next();
     } else {
+      console.log(">>>>check canAccess: ", canAccess);
       return res.status(401).json({
         EC: -1,
         DT: "",
