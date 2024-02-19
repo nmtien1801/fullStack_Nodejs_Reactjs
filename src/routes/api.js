@@ -40,6 +40,7 @@ const initApiRoutes = (app) => {
   router.put("/role/update", roleController.update);
   router.delete("/role/delete", roleController.remove);
   router.get("/role/by-group/:groupId", roleController.getRoleByGroup); // param thì không đọc được '?'
+  router.post("/role/assign-to-group", roleController.assignRoleToGroup);
 
   // group router
   router.get("/group/read", groupController.read);

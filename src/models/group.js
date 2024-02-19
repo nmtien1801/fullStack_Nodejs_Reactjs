@@ -9,7 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Group.hasMany(models.User);
-      Group.belongsToMany(models.Role, { through: "Group_Role" });
+      Group.belongsToMany(models.Role, {
+        through: "Group_Role", // map qua groupRole
+        foreignKey: "groupID", // khoá ngoại nếu không có sẽ tự sinh và lỗi
+      });
     }
   }
   Group.init(
