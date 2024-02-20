@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // sequelize defind relationship stackoverflow
-      User.belongsTo(models.Group);
+      User.belongsTo(models.Group, { foreignKey: "groupID" });
       User.belongsToMany(models.Project, { through: "Project_User" });
     }
   }
