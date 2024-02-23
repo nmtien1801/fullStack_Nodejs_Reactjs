@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       address: DataTypes.STRING,
       sex: DataTypes.STRING,
       phone: DataTypes.STRING,
+      image: DataTypes.STRING,  // add column
       groupID: DataTypes.INTEGER,
+      positionId: DataTypes.STRING,  // add column
     },
     {
       sequelize,

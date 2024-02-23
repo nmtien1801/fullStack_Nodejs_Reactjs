@@ -3,7 +3,7 @@ import configViewEngine from "./config/viewEngine";
 import initWebRoutes from "./routes/web";
 import initApiRoutes from "./routes/api";
 import configCORS from "./config/cors";
-import bodyParser from "body-parser";
+import bodyParser from "body-parser"; // lấy params, query /user?id=7
 require("dotenv").config();
 import connection from "./config/connectDB";
 import cookieParser from "cookie-parser";
@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 configCORS(app);
 
 //config cookie-parser
-app.use(cookieParser())
+app.use(cookieParser());
 
 //-------------------------------------------------------------------------------------
 // init web router

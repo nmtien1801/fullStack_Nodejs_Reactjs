@@ -1,5 +1,7 @@
 const path = require("path");
 
+// search: mherman node postgres sequelize
+// sequelize -> migration (cmd)
 module.exports = {
   config: path.resolve("./src/config", "config.json"),
   "migrations-path": path.resolve("./src", "migrations"),
