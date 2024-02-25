@@ -1,6 +1,6 @@
 import mysql from "mysql2/promise";
 import bcrypt from "bcryptjs";
-import bluebird from "bluebird";
+import bluebird, { reject, resolve } from "bluebird";
 import db from "../models/index";
 // ---------connect to mysql
 // const connection = mysql.createConnection({
@@ -15,14 +15,18 @@ const hashPassWord = (userPassWord) => {
   return bcrypt.hashSync(userPassWord, salt);
 };
 
-const createNewUser = async (email, passWord, userName) => {
-  let CheckHashPass = hashPassWord(passWord);
+const createNewUser = async (data) => {
+  let CheckHashPass = hashPassWord(data.passWord);
   try {
     // db. - tên table - create not save(update)
     await db.User.create({
-      userName: userName,
-      email: email,
+      userName: data.userName,
+      email: data.email,
       passWord: CheckHashPass,
+      address: data.address,
+      phone: data.phone,
+      sex: data.gender,
+      groupId: data.groupId,
     });
   } catch (error) {
     console.log(">>> check err: ", error);
@@ -45,9 +49,15 @@ const getUserList = async () => {
   });
 
   //    select data from db to sequelize
-  let users = [];
-  users = await db.User.findAll();
-  return users;
+  return new Promise(async (resolve, reject) => {
+    try {
+      let users = [];
+      users = await db.User.findAll({ raw: true });
+      resolve(users);
+    } catch (error) {
+      reject(e);
+    }
+  });
 };
 
 const deleteUser = async (userId) => {
@@ -64,17 +74,18 @@ const getUserById = async (id) => {
     where: {
       id: id,
     },
+    // raw: true, // thay vì user.get({plain: true})
   });
   //  chuyển thành obj của javascrip (kh dùng raw vì sẽ kh dùng đc các methot của sequelize)
   return user.get({ plain: true });
 };
 
-const UpdateUser = async (email, userName, id) => {
+const UpdateUser = async (user) => {
   await db.User.update(
-    { email: email, userName: userName },
+    { email: user.email, userName: user.userName, address: user.address },
     {
       where: {
-        id: id,
+        id: user.id,
       },
     }
   );

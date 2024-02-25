@@ -11,11 +11,7 @@ const handleUser = async (req, res) => {
 };
 
 const handleUserCreate = (req, res) => {
-  let email = req.body.email;
-  let passWord = req.body.passWord;
-  let userName = req.body.userName;
-  userService.createNewUser(email, passWord, userName);
-
+  userService.createNewUser(req.body);
   return res.redirect("/");
 };
 
@@ -25,22 +21,23 @@ const handleDeleteUser = async (req, res) => {
 };
 const getUpdateUserPage = async (req, res) => {
   let id = req.params.id;
-  let user = await userService.getUserById(id);
-  let userData = {};
-  // dùng sequelize thì getById mặc định trả về 1 ptu chứ kh còn là mảng
-  userData = user;
+  if (id) {
+    let user = await userService.getUserById(id);
+    let userData = {};
+    // dùng sequelize thì getById mặc định trả về 1 ptu chứ kh còn là mảng - truyền mảng mới lặp đc
+    userData = user;
 
-  // if (user && user.length > 0) {
-  //   userData = user[0];
-  // }
-  return res.render("update.ejs", { userData });
+    // if (user && user.length > 0) {
+    //   userData = user[0];
+    // }
+    return res.render("update.ejs", { userData });
+  } else {
+    return res.send("user not found");
+  }
 };
 const handleUpdateUser = async (req, res) => {
-  let email = req.body.email;
-  let userName = req.body.userName;
-  let id = req.body.id;
-  await userService.UpdateUser(email, userName, id);
-  return res.redirect("/");
+  await userService.UpdateUser(req.body);
+  return res.redirect("/user");
 };
 module.exports = {
   handleHome,

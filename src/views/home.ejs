@@ -11,41 +11,73 @@
 
 <body>
       <div class="container">
-            <div class="row">
+            <div class="">
                   <form method="POST" action="/user/create">
                         <div>
                               <h3>create user new</h3>
                         </div>
-                        <div class="mb-3 mt-3 col-6">
-                              <label for="email" class="form-label">Email address</label>
-                              <input type="email" class="form-control" id="email" name="email">
+                        <div class="row">
+                              <div class="col-md-6">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email">
+                              </div>
+                              <div class="col-md-6">
+                                    <label for="passWord" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="passWord" name="passWord">
+                              </div>
                         </div>
-                        <div class="col-6"></div>
-                        <div class="mb-3 col-6">
-                              <label for="passWord" class="form-label">Password</label>
-                              <input type="password" class="form-control" id="passWord" name="passWord">
-                        </div>
-                        <div class="col-6"></div>
-                        <div class="mb-3 col-6">
-                              <label for="userName" class="form-label">user name</label>
+                        <div class="mb-3 mt-3">
+                              <label for="userName" class="form-label">User name</label>
                               <input type="text" class="form-control" id="userName" name="userName">
                         </div>
-                        <div><button type="submit" class="btn btn-primary">Submit</button></div>
+                        <div class="mb-3 mt-3">
+                              <label for="address" class="form-label">Address</label>
+                              <input type="text" class="form-control" id="address" name="address">
+                        </div>
+                        <div class="row">
+                              <div class="form-group mb-3 mt-3 col-md-6">
+                                    <label for="phone" class="form-label">Phone number</label>
+                                    <input type="number" class="form-control" id="phone" name="phone">
+                              </div>
+
+                              <div class="form-group mb-3 mt-3 col-md-4">
+                                    <label for="gender" class="form-label">Gender</label>
+                                    <select name="gender" class="form-select" aria-label="Default select example">
+                                          <option value="Male" selected>Male</option>
+                                          <option value="Female">Female</option>
+                                          <option value="Other">Other</option>
+                                    </select>
+                              </div>
+                              <div class=" mb-3 mt-3 col-md-2">
+                                    <label for="roles" class="form-label">Group Roles</label>
+                                    <select name="groupRole" class="form-select" aria-label="Default select example">
+                                          <option selected>Choose Role user</option>
+                                          <option value="1">Admin</option>
+                                          <option value="2">Dev</option>
+                                          <option value="3">Other</option>
+                                    </select>
+                              </div>
+                        </div>
+
+                        <div><button type="submit" class="btn btn-primary mb-3">Submit</button></div>
                   </form>
                   <div>
                         <table class="table table-hover table-bordered">
                               <thead>
                                     <tr>
                                           <th scope="col">ID</th>
-                                          <th scope="col">email</th>
-                                          <th scope="col">userName</th>
-                                          <th scope="col">action</th>
+                                          <th scope="col">Email</th>
+                                          <th scope="col">UserName</th>
+                                          <th scope="col">Address</th>
+                                          <th scope="col">Action</th>
                                     </tr>
                               </thead>
                               <tbody>
+                                    <!-- search: ejs loop -->
                                     <% userList.forEach(function(item,index){ %>
                                           <tr>
                                                 <th scope="row">
+                                                      <!-- "=" để in ra giá trị -->
                                                       <%= item.id %>
                                                 </th>
                                                 <td>
@@ -53,6 +85,9 @@
                                                 </td>
                                                 <td>
                                                       <%= JSON.stringify(item.userName)%>
+                                                </td>
+                                                <td>
+                                                      <%= JSON.stringify(item.address)%>
                                                 </td>
                                                 <td>
                                                       <!-- <a href="/update-user/<%=item.id%>"><button type="button" class="btn btn-warning">Edit</button></a> -->

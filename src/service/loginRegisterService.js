@@ -81,6 +81,7 @@ const checkPassword = (userPassWord, hashPassWord) => {
 
 const handleUserLogin = async (rawData) => {
   try {
+    // search: sequelize Op.or
     let user = await db.User.findOne({
       where: {
         [Op.or]: [{ email: rawData.valueLogin }, { phone: rawData.valueLogin }],
