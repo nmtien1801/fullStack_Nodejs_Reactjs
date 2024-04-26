@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+require("dotenv").config();
 
 const createJwt = (payload) => {
   //   let token = jwt.sign({ name: "Tien", address: "HCM" }, process.env.JWT_SECRET);
@@ -26,6 +27,7 @@ const verifyToken = (token) => {
 
 const nonSecurePaths = ["/logout", "/register", "/login"]; // kh check middleware url (1)
 
+// token từ BE sẽ lưu vào header bên FE
 const extractToken = (req) => {
   if (
     req.headers.authorization &&
@@ -109,9 +111,24 @@ const checkUserPermission = (req, res, next) => {
   }
 };
 
+// tạo mới khi token hết hạn
+const refreshToken = (payload) => {
+  let key = process.env.JWT_REFRESH_TOKEN;
+  let token = null;
+  try {
+    token = jwt.sign(payload, key, {
+      expiresIn: process.env.JWT_REFRESH_EXPIRES_TOKEN,
+    }); // fix lỗi thời gian lưu token # cookies
+  } catch (error) {
+    console.log(">>>>>check err token: ", error);
+  }
+  return token;
+};
+
 module.exports = {
   createJwt,
   verifyToken,
   checkUserJwt,
   checkUserPermission,
+  refreshToken,
 };

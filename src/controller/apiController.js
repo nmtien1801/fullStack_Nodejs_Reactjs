@@ -1,4 +1,5 @@
 import loginRegisterService from "../service/loginRegisterService";
+import { verifyToken } from "../middleware/jwtAction";
 
 const testApi = (req, res) => {
   return res.status(200).json({
@@ -45,13 +46,16 @@ const handleRegister = async (req, res) => {
 const handleLogin = async (req, res) => {
   try {
     let data = await loginRegisterService.handleUserLogin(req.body);
-    // set cookie
+    // set cookie chứa refreshToken -> còn access_token lưu trong localStorage(FE)
     if (data && data.DT.access_token) {
       res.cookie("jwt", data.DT.access_token, {
         httpOnly: true,
+        // secure: true,
         maxAge: 60 * 60 * 1000,
+        sameSite: "strict", // ngăn chặn(CSOS) request từ các trang web khác
       });
     }
+    //
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -85,6 +89,21 @@ const handleLogout = async (req, res) => {
     });
   }
 };
+
+const getRefreshToken = (req) => {
+  let cookies = req.cookies;
+  if (cookies && cookies.refreshToken) {
+    return cookies.refreshToken;
+  } else {
+    return res.status(401).json({
+      EM: "you are not authenticated", //error message
+      EC: 2, //error code
+      DT: "", // data
+    });
+    verifyToken(cookies.refreshToken);
+  }
+};
+
 module.exports = {
   testApi,
   handleRegister,

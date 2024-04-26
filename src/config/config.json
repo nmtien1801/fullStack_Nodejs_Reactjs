@@ -8,7 +8,8 @@
     "define": {
       "freezeTableName": true
     },
-    "logging": false
+    "logging": false,
+    "timezone": "+07:00"
   },
   "test": {
     "username": "root",

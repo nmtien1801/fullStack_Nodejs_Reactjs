@@ -5,6 +5,28 @@ import {
   checkPhoneExists,
 } from "./loginRegisterService";
 const getAllUser = async () => {
+  // return new Promise(async (resolve, reject) => {
+  //   try {
+  //     let user = "";
+  //     if (userId === "ALL") {
+  //       user = await db.User.findAll({
+  //         attributes: ["id", "userName", "email", "phone", "sex"], // chỉ lấy cái muốn xem
+  //             raw: true, // trả về 1 obj
+  //             include: { model: db.Group, attributes: ["id", "name", "description"] }, // hiện bảng join
+  //             nest: true, // đưa bảng join vào obj
+  //       });
+  //     }
+  //     if (user && userId !== "ALL") {
+  //       user = await db.User.findOne({
+  //         where: { id: userId },
+  //       });
+  //     }
+  //     resolve(user);
+  //   } catch (error) {
+  //     reject(error);
+  //   }
+  // });
+
   try {
     let users = await db.User.findAll({
       attributes: ["id", "userName", "email", "phone", "sex"], // chỉ lấy cái muốn xem

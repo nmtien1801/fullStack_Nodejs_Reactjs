@@ -3,18 +3,26 @@ import bcrypt from "bcryptjs";
 import { raw } from "body-parser";
 import { getGroupWithRoles } from "./jwtService";
 import { Op } from "sequelize";
-import { createJwt } from "../middleware/jwtAction";
+import { createJwt, refreshToken } from "../middleware/jwtAction";
+import { reject, resolve } from "bluebird";
 require("dotenv").config();
 // SEARCH: sequelize
 
-const checkEmailExists = async (userEmail) => {
-  let user = await db.User.findOne({
-    where: { email: userEmail },
+const checkEmailExists = (userEmail) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await db.User.findOne({
+        where: { email: userEmail },
+      });
+      if (user) {
+        resolve(true);
+      } else {
+        resolve(false);
+      }
+    } catch (error) {
+      reject(error);
+    }
   });
-  if (user) {
-    return true;
-  }
-  return false;
 };
 
 const checkPhoneExists = async (userPhone) => {
@@ -98,11 +106,13 @@ const handleUserLogin = async (rawData) => {
           groupWithRole,
         };
         let token = createJwt(payload);
+        let tokenRefresh = refreshToken(payload);
         return {
           EM: "ok!",
           EC: 0,
           DT: {
             access_token: token,
+            refreshToken: tokenRefresh,
             groupWithRole: groupWithRole,
             email: user.email,
             userName: user.userName,
