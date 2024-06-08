@@ -22,7 +22,7 @@ const initWebRoutes = (app) => {
   router.post("/update-user/:id", homeController.getUpdateUserPage);
   router.post("/userUpdate", homeController.handleUpdateUser);
 
-  router.get("/allCode/:type", userController.getAllCode);
+  router.get("/allCode", userController.getAllCode);
   //rest api - dùng web sử dụng các method (CRUD)
   //GET(R), POST (C), PUT (U), DELETE (D)
   // router.get("/api/test-api", apiController.testApi);

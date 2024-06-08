@@ -200,7 +200,7 @@ const deleteUser = async (id) => {
 // import data ytb sern 52: https://docs.google.com/spreadsheets/d/175ts9y-bJGAwEUtVEFojJQ4nFCH_lIU0poA0wVjM_lk/edit?gid=466017350#gid=466017350
 const getAllCodeService = async (typeInput) => {
   try {
-    // service lấy data từ db: tìm trong model\
+    // service lấy data từ db: tìm trong model
 
     if (!typeInput) {
       return {
@@ -209,7 +209,7 @@ const getAllCodeService = async (typeInput) => {
         DT: [], // data
       };
     } else {
-      let data = await db.AllCode.findAll({
+      let data = await db.AllCodes.findAll({
         where: { type: typeInput },
       });
       return {
@@ -219,7 +219,7 @@ const getAllCodeService = async (typeInput) => {
       };
     }
   } catch (error) {
-    console.log(">>>check err: ", error);
+    // err: Table 'jwt.allcode' doesn't exist -> sửa tên model cho giống migration
     return {
       EM: "some thing wrongs with service", //error message
       EC: 2, //error code
