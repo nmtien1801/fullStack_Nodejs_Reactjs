@@ -67,7 +67,7 @@ const registerNewUser = async (rawUserData) => {
       phone: rawUserData.phone,
       userName: rawUserData.userName,
       passWord: CheckHashPass,
-      groupID: 4, // mặc định là Guess
+      groupID: 2, // mặc định là Guest
     });
     // không bị lỗi
     return {

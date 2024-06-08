@@ -112,10 +112,29 @@ const getUserAccount = async (req, res) => {
     });
   }
 };
+
+const getAllCode = async (req, res) => {
+  try {
+    let data = await userApiService.getAllCodeService(req.query.type);
+
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT, // data
+    });
+  } catch (error) {
+    return res.status(500).json({
+      EM: "error from sever", //error message
+      EC: 2, //error code
+      DT: "", // data
+    });
+  }
+};
 module.exports = {
   read,
   create,
   update,
   remove,
   getUserAccount,
+  getAllCode,
 };

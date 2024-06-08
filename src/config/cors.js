@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+// CORS : chặn api khi host lạ truy cập => phải đùng port (3000) mới lấy đc API
 const configCORS = (app) => {
   // Add headers before the routes are defined
   app.use(function (req, res, next) {

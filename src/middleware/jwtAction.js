@@ -41,7 +41,6 @@ const extractToken = (req) => {
 // middleware jwt check user đã đăng nhập chưa
 const checkUserJwt = (req, res, next) => {
   if (nonSecurePaths.includes(req.path)) return next(); // kh check middleware url (2)
-
   let cookies = req.cookies;
   let tokenFromHeader = extractToken(req);
 
@@ -57,7 +56,7 @@ const checkUserJwt = (req, res, next) => {
       return res.status(401).json({
         EC: -1,
         DT: "",
-        EM: "Not authenticated the user",
+        EM: "Not authenticated the user(token jwt)",
       });
     }
     // console.log(">>> my cookies 401: ", cookies.jwt);
@@ -67,7 +66,7 @@ const checkUserJwt = (req, res, next) => {
     return res.status(401).json({
       EC: -1,
       DT: "",
-      EM: "Not authenticated the user",
+      EM: "Not authenticated the user(jwt | JWT)",
     });
   }
 };

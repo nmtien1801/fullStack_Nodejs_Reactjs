@@ -1,3 +1,4 @@
+import { where } from "sequelize/lib/sequelize";
 import db from "../models/index";
 import {
   hashPassWord,
@@ -196,10 +197,41 @@ const deleteUser = async (id) => {
   }
 };
 
+// import data ytb sern 52: https://docs.google.com/spreadsheets/d/175ts9y-bJGAwEUtVEFojJQ4nFCH_lIU0poA0wVjM_lk/edit?gid=466017350#gid=466017350
+const getAllCodeService = async (typeInput) => {
+  try {
+    // service lấy data từ db: tìm trong model\
+
+    if (!typeInput) {
+      return {
+        EM: "error typeInput emty", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      let data = await db.AllCode.findAll({
+        where: { type: typeInput },
+      });
+      return {
+        EM: "get data success", //error message
+        EC: 0, //error code
+        DT: data, // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
 module.exports = {
   getAllUser,
   createNewUser,
   updateUser,
   deleteUser,
   getUserWithPagination,
+  getAllCodeService,
 };

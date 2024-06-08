@@ -26,7 +26,7 @@ const createNewUser = async (data) => {
       address: data.address,
       phone: data.phone,
       sex: data.gender,
-      groupId: data.groupId,
+      groupID: data.groupRole,
     });
   } catch (error) {
     console.log(">>> check err: ", error);

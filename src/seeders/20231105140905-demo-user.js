@@ -14,22 +14,13 @@ module.exports = {
       "User",
       [
         {
-          email: "test@gmail.com",
-          passWord: "1234",
-          userName: "fake1",
-          address: "TPHCM",
-          sex: "Male",
-          phone: "0123456789",
-          groupID: 4,
-        },
-        {
           email: "admin@gmail.com",
           passWord: "1234",
           userName: "fake2",
           address: "HN",
           sex: "Male",
           phone: "0123456985",
-          groupID: 4,
+          groupID: 2,
         },
         {
           email: "dev@gmail.com",
@@ -38,7 +29,7 @@ module.exports = {
           address: "An Giang",
           sex: "Male",
           phone: "0129526789",
-          groupID: 4,
+          groupID: 2,
         },
       ],
       {}
