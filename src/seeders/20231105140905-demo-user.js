@@ -2,14 +2,7 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    // email: DataTypes.STRING,
-    //   passWord: DataTypes.STRING,
-    //   userName: DataTypes.STRING,
-    //   address: DataTypes.STRING,
-    //   sex: DataTypes.STRING,
-    //   phone: DataTypes.STRING,
-    //   gender: DataTypes.BOOLEAN,
-    //   groupID: DataTypes.INTEGER,
+    // import data ytb sern 52: https://docs.google.com/spreadsheets/d/175ts9y-bJGAwEUtVEFojJQ4nFCH_lIU0poA0wVjM_lk/edit?gid=466017350#gid=466017350
     await queryInterface.bulkInsert(
       "User",
       [

@@ -55,7 +55,8 @@ const getUserList = async () => {
       users = await db.User.findAll({ raw: true });
       resolve(users);
     } catch (error) {
-      reject(e);
+      console.log(">>> check err getUserList: ", error);
+      reject(error);
     }
   });
 };

@@ -30,6 +30,9 @@ module.exports = {
       groupID: {
         type: Sequelize.INTEGER,
       },
+      roleID: {
+        type: Sequelize.STRING,
+      },
 
       createdAt: {
         allowNull: false,
@@ -45,3 +48,7 @@ module.exports = {
     await queryInterface.dropTable("User");
   },
 };
+
+// search : sequelize run specific migration
+// npx sequelize-cli db:migrate --to 20231105121046-create-user.js
+// npx sequelize-cli db:migrate --to migrate_addColumnUser.js

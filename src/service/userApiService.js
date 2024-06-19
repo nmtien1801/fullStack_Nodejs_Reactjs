@@ -111,7 +111,15 @@ const createNewUser = async (data) => {
     // hash user password
     let CheckHashPass = hashPassWord(data.password);
     // create new user from modalUser
-    await db.User.create({ ...data, passWord: CheckHashPass });
+    console.log(">>>>check data: ", data);
+    await db.User.create({
+      ...data,
+      positionID: data.position,
+      roleID: data.role,
+      image: data.avatar,
+      passWord: CheckHashPass,
+    });
+
     return {
       EM: "create user success", //error message
       EC: 0, //error code
