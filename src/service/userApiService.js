@@ -63,11 +63,22 @@ const getUserWithPagination = async (page, limit) => {
     let { count, rows } = await db.User.findAndCountAll({
       offset: offset,
       limit: limit,
-      attributes: ["id", "userName", "email", "phone", "sex", "address"], // chỉ lấy cái muốn xem
+      attributes: [
+        "id",
+        "userName",
+        "email",
+        "phone",
+        "sex",
+        "groupID",
+        "address",
+        "roleID",
+        "positionID",
+        "image",
+      ], // chỉ lấy cái muốn xem
       raw: true, // trả về 1 obj
       include: { model: db.Group, attributes: ["id", "name", "description"] }, // hiện bảng join
       nest: true, // đưa bảng join vào obj
-      order: [["id", "ASC"]],
+      order: [["id", "DESC"]], // giảm dần
     });
     let totalPage = Math.ceil(count / limit);
     let data = {
@@ -111,11 +122,11 @@ const createNewUser = async (data) => {
     // hash user password
     let CheckHashPass = hashPassWord(data.password);
     // create new user from modalUser
-    console.log(">>>>check data: ", data);
     await db.User.create({
       ...data,
       positionID: data.position,
       roleID: data.role,
+      // fix (request entity too large react): sửa file server ,sửa trong xampp -> max_allowed_packet: 16Mb
       image: data.avatar,
       passWord: CheckHashPass,
     });
@@ -143,16 +154,26 @@ const updateUser = async (data) => {
         DT: "group", // data
       };
     }
+    if (!data.role || !data.position || !data.sex) {
+      return {
+        EM: "Missing required parameter",
+        EC: 1,
+        DT: "",
+      };
+    }
     let user = await db.User.findOne({
       where: { id: data.id },
     });
     if (user) {
-      console.log(">>>>check user: ", user);
       await user.update({
         userName: data.userName,
+        phone: data.phone,
         address: data.address,
         sex: data.sex,
         groupID: data.groupID,
+        positionID: data.position,
+        roleID: data.role,
+        image: data.avatar,
       });
       return {
         EM: "update user success", //error message

@@ -14,8 +14,12 @@ configViewEngine(app);
 
 //-------------------------------------------------------------------------------------
 // config body parser
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+
+// -> fix bug lưu img : request entity too large react
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 //-------------------------------------------------------------------------------------
 //test connection sequelize
