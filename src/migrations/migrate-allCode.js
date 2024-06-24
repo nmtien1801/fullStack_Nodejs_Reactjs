@@ -1,3 +1,4 @@
+// import data ytb sern 52: https://docs.google.com/spreadsheets/d/175ts9y-bJGAwEUtVEFojJQ4nFCH_lIU0poA0wVjM_lk/edit?gid=466017350#gid=466017350
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -8,7 +9,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      key: {
+      keyMap: {
         type: Sequelize.STRING,
       },
       type: {
@@ -34,3 +35,5 @@ module.exports = {
     await queryInterface.dropTable("allCodes");
   },
 };
+
+// npx sequelize-cli db:migrate --to migrate-allCode.js

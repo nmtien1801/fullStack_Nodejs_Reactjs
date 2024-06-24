@@ -2,6 +2,7 @@ import express from "express";
 import homeController from "../controller/homeController";
 import apiController from "../controller/apiController";
 import userController from "../controller/userController";
+import doctorController from "../controller/doctorController";
 const router = express.Router(); // bằng app = express();
 /**
  *
@@ -26,6 +27,7 @@ const initWebRoutes = (app) => {
   //GET(R), POST (C), PUT (U), DELETE (D)
 
   router.get("/api/allCode", userController.getAllCode);
+  router.get("/api/top-doctor-home", doctorController.getDoctorHome);
 
   return app.use("/", router);
 };

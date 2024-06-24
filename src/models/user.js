@@ -11,6 +11,16 @@ module.exports = (sequelize, DataTypes) => {
       // sequelize defind relationship stackoverflow
       User.belongsTo(models.Group, { foreignKey: "groupID" });
       User.belongsToMany(models.Project, { through: "Project_User" });
+      User.belongsTo(models.AllCodes, {
+        foreignKey: "positionID",
+        targetKey: "keyMap",
+        as: "positionData",
+      });
+      User.belongsTo(models.AllCodes, {
+        foreignKey: "gender",
+        targetKey: "keyMap",
+        as: "genderData",
+      });
     }
   }
   User.init(

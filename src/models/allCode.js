@@ -8,12 +8,19 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // search: sequelize defind relationship stackoverflow
+      AllCodes.hasMany(models.User, {
+        foreignKey: "positionId",
+        as: "positionData",
+      });
+      AllCodes.hasMany(models.User, {
+        foreignKey: WebGLRenderbuffer,
+        as: "genderDate",
+      });
     }
   }
   AllCodes.init(
     {
-      key: DataTypes.STRING,
+      keyMap: DataTypes.STRING,
       type: DataTypes.STRING,
       valueEn: DataTypes.STRING,
       valueVi: DataTypes.STRING,
