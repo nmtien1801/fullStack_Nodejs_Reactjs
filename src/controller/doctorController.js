@@ -14,13 +14,70 @@ const getDoctorHome = async (req, res) => {
   } catch (error) {
     console.log(">>>check err doctorHome: ", error);
     return res.status(500).json({
-      EM: "error from sever", //error message
-      EC: 2, //error code
-      DT: "", // data
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  }
+};
+
+const getAllDoctor = async (req, res) => {
+  try {
+    let data = await doctorService.getAllDoctors();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err getAllDoctor: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
+    });
+  }
+};
+
+const postInfoDoctor = async (req, res) => {
+  try {
+    let data = await doctorService.saveDetailInfoDoctor(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err getAllDoctor: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
+    });
+  }
+};
+
+const getDetailDoctorById = async (req, res) => {
+  try {
+    let data = await doctorService.getDetailDoctorById(+req.query.id);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err getDetailDoctorById: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
     });
   }
 };
 
 module.exports = {
   getDoctorHome,
+  getAllDoctor,
+  postInfoDoctor,
+  getDetailDoctorById,
 };

@@ -3,6 +3,7 @@ import homeController from "../controller/homeController";
 import apiController from "../controller/apiController";
 import userController from "../controller/userController";
 import doctorController from "../controller/doctorController";
+
 const router = express.Router(); // bằng app = express();
 /**
  *
@@ -28,6 +29,12 @@ const initWebRoutes = (app) => {
 
   router.get("/api/allCode", userController.getAllCode);
   router.get("/api/top-doctor-home", doctorController.getDoctorHome);
+  router.get("/api/get-all-doctor", doctorController.getAllDoctor);
+  router.post("/api/save-info-doctor", doctorController.postInfoDoctor);
+  router.get(
+    "/api/get-detail-doctor-by-id",
+    doctorController.getDetailDoctorById
+  );
 
   return app.use("/", router);
 };

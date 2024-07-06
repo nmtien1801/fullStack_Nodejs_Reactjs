@@ -17,9 +17,12 @@ module.exports = (sequelize, DataTypes) => {
         as: "positionData",
       });
       User.belongsTo(models.AllCodes, {
-        foreignKey: "gender",
+        foreignKey: "sex",
         targetKey: "keyMap",
         as: "genderData",
+      });
+      User.hasOne(models.Markdown, {
+        foreignKey: "doctorID",
       });
     }
   }
