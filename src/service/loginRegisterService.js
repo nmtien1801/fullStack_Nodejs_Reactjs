@@ -97,6 +97,7 @@ const handleUserLogin = async (rawData) => {
     });
     if (user) {
       let isCorrectPassword = checkPassword(rawData.password, user.passWord);
+      // console.log("user: ", user);
       // không bị lỗi
       if (isCorrectPassword === true) {
         let groupWithRole = await getGroupWithRoles(user);
@@ -104,6 +105,8 @@ const handleUserLogin = async (rawData) => {
           email: user.email,
           userName: user.userName,
           groupWithRole,
+          roleID: user.roleID, // chức vụ
+          positionID: user.positionID, // vị trí
         };
         let token = createJwt(payload);
         let tokenRefresh = refreshToken(payload);
@@ -116,6 +119,8 @@ const handleUserLogin = async (rawData) => {
             groupWithRole: groupWithRole,
             email: user.email,
             userName: user.userName,
+            roleID: user.roleID, // chức vụ
+            positionID: user.positionID, // vị trí
           },
         };
       }

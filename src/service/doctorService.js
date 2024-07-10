@@ -2,7 +2,11 @@ import { at } from "lodash";
 import db from "../models/index";
 import { where } from "sequelize/dist/index.js";
 import { raw } from "body-parser";
+require("dotenv").config(); // dùng env
+import _ from "lodash";
+import e from "express";
 
+const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 const getTopDoctorHome = async (limit) => {
   try {
     let data = await db.User.findAll({
@@ -68,16 +72,40 @@ const getAllDoctors = async () => {
 
 const saveDetailInfoDoctor = async (dataInput) => {
   try {
-    if (dataInput.id || dataInput.contentHTML || dataInput.contentMarkdown) {
-      let data = await db.Markdown.create({
-        ...dataInput,
-        doctorID: dataInput.doctorID,
-      });
-      return {
-        EM: "create doctor success", //error message
-        EC: 0, //error code
-        DT: [], // data
-      };
+    if (
+      dataInput.id ||
+      dataInput.contentHTML ||
+      dataInput.contentMarkdown ||
+      dataInput.action
+    ) {
+      if (dataInput.action === "CREATE") {
+        let data = await db.Markdown.create({
+          ...dataInput,
+          doctorId: dataInput.doctorID,
+        });
+        return {
+          EM: "create doctor success", //error message
+          EC: 0, //error code
+          DT: [], // data
+        };
+      } else if (dataInput.action === "EDIT") {
+        // update .save
+        let dataUpdate = await db.Markdown.findOne({
+          where: { doctorId: dataInput.doctorID },
+          raw: false, // dùng .save phải có raw: false
+        });
+        if (dataUpdate) {
+          dataUpdate.contentMarkdown = dataInput.contentMarkdown;
+          dataUpdate.contentHTML = dataInput.contentHTML;
+          dataUpdate.description = dataInput.description;
+          await dataUpdate.save();
+        }
+        return {
+          EM: "update doctor success", //error message
+          EC: 0, //error code
+          DT: [], // data
+        };
+      }
     } else {
       return {
         EM: "create doctor miss", //error message
@@ -145,9 +173,75 @@ const getDetailDoctorById = async (id) => {
   }
 };
 
+const bulkCreateSchedule = async (data) => {
+  try {
+    if (!data.arraySchedule || !data.doctorID || !data.date) {
+      return {
+        EM: "miss data arraySchedule", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      let schedule = data.arraySchedule;
+      if (schedule && schedule.length > 0) {
+        schedule = schedule.map((item) => {
+          item.maxNumber = MAX_NUMBER_SCHEDULE; // maxNumber bên DB -> tự thêm do FE kh truyền
+          return item;
+        });
+      }
+
+      // ==================================================================================
+      // tạo nhiều bị trùng
+      // search: how to get difference between two arrays of objects javascript
+      let exists = await db.Schedules.findAll({
+        where: {
+          doctorId: data.doctorID,
+          date: data.date,
+        },
+        attributes: ["timeType", "date", "doctorId", "maxNumber"],
+        raw: true,
+      });
+      // xem FE chuyển lên ở header bên Network của inspect
+      // ngày tháng năm
+      // ngày có dạng 146452300 khác với trong DB là 10/07/2024
+      // dù bên FE đã format đúng rồi nhưng mặc định chuyền lên là 1 chuỗi(146452300) nên vẫn phải format lại ở BE
+      if (exists && exists.length > 0) {
+        exists = exists.map((item) => {
+          item.date = new Date(item.date).getTime();
+          return item;
+        });
+      }
+
+      // so sánh tồn tại trong DB
+      let toCreate = _.differenceWith(schedule, exists, (a, b) => {
+        return a.timeType === b.timeType && a.date === b.date;
+      });
+
+      // =============================================================================================
+      if (toCreate && toCreate.length > 0) {
+        await db.Schedules.bulkCreate(toCreate);
+      }
+
+      return {
+        EM: "create schedule doctor success", //error message
+        EC: 0, //error code
+        DT: [], // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err bulkCreateSchedule: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 module.exports = {
   getTopDoctorHome,
   getAllDoctors,
   saveDetailInfoDoctor,
   getDetailDoctorById,
+  bulkCreateSchedule,
 };

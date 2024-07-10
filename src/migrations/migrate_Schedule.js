@@ -14,13 +14,13 @@ module.exports = {
       maxNumber: {
         type: Sequelize.INTEGER,
       },
+      timeType: {
+        type: Sequelize.STRING,
+      },
       date: {
         type: Sequelize.DATE,
       },
-      dateType: {
-        type: Sequelize.STRING,
-      },
-      doctorId: {
+      doctorID: {
         type: Sequelize.INTEGER,
       },
 
@@ -38,3 +38,5 @@ module.exports = {
     await queryInterface.dropTable("Schedules");
   },
 };
+
+// npx sequelize-cli db:migrate --to migrate_Schedule.js
