@@ -59,7 +59,7 @@ const postInfoDoctor = async (req, res) => {
 
 const getDetailDoctorById = async (req, res) => {
   try {
-    let data = await doctorService.getDetailDoctorById(+req.query.id);
+    let data = await doctorService.getDetailDoctorById(+req.query.id); // có ? nên dùng req.query
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -77,7 +77,7 @@ const getDetailDoctorById = async (req, res) => {
 
 const bulkCreateSchedule = async (req, res) => {
   try {
-    let data = await doctorService.bulkCreateSchedule(req.body);
+    let data = await doctorService.bulkCreateSchedule(req.body); // kh có ? nên dùng req.body
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
@@ -93,10 +93,33 @@ const bulkCreateSchedule = async (req, res) => {
   }
 };
 
+const getSchedulesByDate = async (req, res) => {
+  try {
+    let data = await doctorService.getSchedulesByDate(
+      +req.query.doctorID, // có ? nên dùng req.query
+      +req.query.date
+    );
+
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err getSchedulesByDate: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   getDoctorHome,
   getAllDoctor,
   postInfoDoctor,
   getDetailDoctorById,
   bulkCreateSchedule,
+  getSchedulesByDate,
 };

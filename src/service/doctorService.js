@@ -1,10 +1,10 @@
-import { at } from "lodash";
 import db from "../models/index";
 import { where } from "sequelize/dist/index.js";
 import { raw } from "body-parser";
 require("dotenv").config(); // dùng env
-import _ from "lodash";
+import _, { find, includes } from "lodash";
 import e from "express";
+import { Find_ConvertDateToTimeStampSchedule } from "../config/find_ConvertDate";
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 const getTopDoctorHome = async (limit) => {
@@ -189,33 +189,31 @@ const bulkCreateSchedule = async (data) => {
           return item;
         });
       }
-
       // ==================================================================================
       // tạo nhiều bị trùng
+      // tìm tất cả schedule của bác sĩ theo ngày
       // search: how to get difference between two arrays of objects javascript
       let exists = await db.Schedules.findAll({
         where: {
-          doctorId: data.doctorID,
+          doctorID: data.doctorID,
           date: data.date,
         },
-        attributes: ["timeType", "date", "doctorId", "maxNumber"],
+        attributes: ["timeType", "date", "doctorID", "maxNumber"],
         raw: true,
       });
-      // xem FE chuyển lên ở header bên Network của inspect
-      // ngày tháng năm
-      // ngày có dạng 146452300 khác với trong DB là 10/07/2024
-      // dù bên FE đã format đúng rồi nhưng mặc định chuyền lên là 1 chuỗi(146452300) nên vẫn phải format lại ở BE
-      if (exists && exists.length > 0) {
-        exists = exists.map((item) => {
-          item.date = new Date(item.date).getTime();
-          return item;
-        });
-      }
 
-      // so sánh tồn tại trong DB
-      let toCreate = _.differenceWith(schedule, exists, (a, b) => {
-        return a.timeType === b.timeType && a.date === b.date;
-      });
+      let convertDateToTimeStamp = await Find_ConvertDateToTimeStampSchedule(
+        exists
+      );
+
+      // lọc những cái đã có và chỉ thêm cái mới
+      let toCreate = _.differenceWith(
+        schedule,
+        convertDateToTimeStamp,
+        (a, b) => {
+          return a.timeType === b.timeType && a.date === b.date;
+        }
+      );
 
       // =============================================================================================
       if (toCreate && toCreate.length > 0) {
@@ -238,10 +236,70 @@ const bulkCreateSchedule = async (data) => {
   }
 };
 
+const getSchedulesByDate = async (doctorID, date) => {
+  try {
+    console.log("doctorID: ", doctorID, "date: ", date);
+    if (!doctorID || !date) {
+      return {
+        EM: "missing required parameters", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      // ==================================================================================
+      // tạo nhiều bị trùng
+      // tìm tất cả schedule của bác sĩ theo ngày
+      // ngày tháng năm dd/mm/yyyy (BE) -> 2133261 (FE)
+      // search: how to get difference between two arrays of objects javascript
+      let exists = await db.Schedules.findAll({
+        where: {
+          doctorID: doctorID,
+          date: date,
+        },
+        attributes: ["timeType", "date", "doctorID", "maxNumber"],
+        include: [
+          {
+            model: db.AllCodes,
+            as: "timeTypeData",
+            attributes: ["valueEn", "valueVi"],
+          },
+        ],
+        raw: true,
+        nest: true, // đưa bảng join vào obj
+      });
+
+      let convertDateToTimeStamp = await Find_ConvertDateToTimeStampSchedule(
+        exists
+      );
+      console.log("convertDateToTimeStamp: ", convertDateToTimeStamp);
+      if (convertDateToTimeStamp && convertDateToTimeStamp.length > 0) {
+        return {
+          EM: "get data doctor success", //error message
+          EC: 0, //error code
+          DT: convertDateToTimeStamp, // data
+        };
+      } else {
+        return {
+          EM: "get data doctor success", //error message
+          EC: 0, //error code
+          DT: [], // data
+        };
+      }
+    }
+  } catch (error) {
+    console.log(">>>check err getSchedulesByDate: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
 module.exports = {
   getTopDoctorHome,
   getAllDoctors,
   saveDetailInfoDoctor,
   getDetailDoctorById,
   bulkCreateSchedule,
+  getSchedulesByDate,
 };
