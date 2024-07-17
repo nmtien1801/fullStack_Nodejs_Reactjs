@@ -76,36 +76,63 @@ const saveDetailInfoDoctor = async (dataInput) => {
       dataInput.id ||
       dataInput.contentHTML ||
       dataInput.contentMarkdown ||
-      dataInput.action
+      dataInput.action ||
+      dataInput.selectedPrice ||
+      dataInput.selectedPayment ||
+      dataInput.selectedProvince ||
+      dataInput.nameClinic ||
+      dataInput.addressClinic ||
+      dataInput.note
     ) {
+      // upsert to Markdown
       if (dataInput.action === "CREATE") {
         let data = await db.Markdown.create({
           ...dataInput,
-          doctorId: dataInput.doctorID,
+          doctorID: dataInput.doctorID,
         });
-        return {
-          EM: "create doctor success", //error message
-          EC: 0, //error code
-          DT: [], // data
-        };
       } else if (dataInput.action === "EDIT") {
         // update .save
         let dataUpdate = await db.Markdown.findOne({
-          where: { doctorId: dataInput.doctorID },
+          where: { doctorID: dataInput.doctorID },
           raw: false, // dùng .save phải có raw: false
         });
+
         if (dataUpdate) {
           dataUpdate.contentMarkdown = dataInput.contentMarkdown;
           dataUpdate.contentHTML = dataInput.contentHTML;
           dataUpdate.description = dataInput.description;
           await dataUpdate.save();
         }
-        return {
-          EM: "update doctor success", //error message
-          EC: 0, //error code
-          DT: [], // data
-        };
       }
+
+      // upsert to Doctor_info
+      let doctorInfo = await db.Doctor_Info.findOne({
+        where: { doctorID: dataInput.doctorID },
+        raw: false, // dùng .save phải có raw: false
+      });
+      console.log("doctorInfo: ", doctorInfo);
+      if (doctorInfo) {
+        //update
+        doctorInfo.doctorID = dataInput.doctorID;
+        doctorInfo.priceID = dataInput.selectedPrice;
+        doctorInfo.provinceID = dataInput.selectedProvince;
+        doctorInfo.paymentID = dataInput.selectedPayment;
+        await doctorInfo.save();
+      } else {
+        //create
+        let data = await db.Doctor_Info.create({
+          ...dataInput,
+          doctorID: dataInput.doctorID,
+          priceID: dataInput.selectedPrice,
+          provinceID: dataInput.selectedProvince,
+          paymentID: dataInput.selectedPayment,
+        });
+      }
+      return {
+        EM: "create doctor success", //error message
+        EC: 0, //error code
+        DT: [], // data
+      };
     } else {
       return {
         EM: "create doctor miss", //error message
@@ -132,6 +159,7 @@ const getDetailDoctorById = async (id) => {
         DT: [], // data
       };
     } else {
+      // map 3 bảng user - markdown - doctor_info
       let data = await db.User.findOne({
         where: { id: id },
         attributes: {
@@ -145,7 +173,30 @@ const getDetailDoctorById = async (id) => {
           {
             model: db.AllCodes,
             as: "positionData",
-            attributes: ["valueEn", "valueVi"],
+            attributes: ["valueEn", "valueVi"], // chỉ lấy
+          },
+          {
+            model: db.Doctor_Info,
+            attributes: {
+              exclude: ["id", "doctorID"], // không lấy
+            },
+            include: [
+              {
+                model: db.AllCodes,
+                as: "priceTypeData",
+                attributes: ["valueEn", "valueVi"],
+              },
+              {
+                model: db.AllCodes,
+                as: "provinceTypeData",
+                attributes: ["valueEn", "valueVi"],
+              },
+              {
+                model: db.AllCodes,
+                as: "paymentTypeData",
+                attributes: ["valueEn", "valueVi"],
+              },
+            ],
           },
         ],
         // raw: true, // trả về 1 obj - không dùng vì không muốn lấy markdown khi find không có
@@ -156,6 +207,7 @@ const getDetailDoctorById = async (id) => {
       if (data && data.image) {
         data.image = Buffer.from(data.image, "base64").toString("binary"); // chuyển từ base64 sang Blob
       }
+
       if (!data) data = {}; // ép cứng điều kiện luôn có data để đỡ check đk bên FE
       return {
         EM: "get data doctor success", //error message
