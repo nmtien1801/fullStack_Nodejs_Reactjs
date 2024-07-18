@@ -290,7 +290,7 @@ const bulkCreateSchedule = async (data) => {
 
 const getSchedulesByDate = async (doctorID, date) => {
   try {
-    console.log("doctorID: ", doctorID, "date: ", date);
+    // console.log("doctorID: ", doctorID, "date: ", date);
     if (!doctorID || !date) {
       return {
         EM: "missing required parameters", //error message
@@ -323,7 +323,7 @@ const getSchedulesByDate = async (doctorID, date) => {
       let convertDateToTimeStamp = await Find_ConvertDateToTimeStampSchedule(
         exists
       );
-      console.log("convertDateToTimeStamp: ", convertDateToTimeStamp);
+      // console.log("convertDateToTimeStamp: ", convertDateToTimeStamp);
       if (convertDateToTimeStamp && convertDateToTimeStamp.length > 0) {
         return {
           EM: "get data doctor success", //error message
@@ -347,6 +347,60 @@ const getSchedulesByDate = async (doctorID, date) => {
     };
   }
 };
+
+const getExtraInfoDoctorById = async (doctorID) => {
+  try {
+    if (!doctorID) {
+      return {
+        EM: "missing required parameters", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      console.log("doctorID: ", doctorID);
+      let data = await db.Doctor_Info.findOne({
+        where: { doctorID: doctorID },
+        attributes: {
+          exclude: ["id", "doctorID"], // không lấy
+        },
+        include: [
+          {
+            model: db.AllCodes,
+            as: "priceTypeData",
+            attributes: ["valueEn", "valueVi"],
+          },
+          {
+            model: db.AllCodes,
+            as: "provinceTypeData",
+            attributes: ["valueEn", "valueVi"],
+          },
+          {
+            model: db.AllCodes,
+            as: "paymentTypeData",
+            attributes: ["valueEn", "valueVi"],
+          },
+        ],
+        raw: false, // dùng .save phải có raw: false
+        nest: true, // đưa bảng join vào obj
+      });
+
+      if (!data) data = {};
+      return {
+        EM: "get data doctor success", //error message
+        EC: 0, //error code
+        DT: data, // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err getExtraInfoDoctorById: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 module.exports = {
   getTopDoctorHome,
   getAllDoctors,
@@ -354,4 +408,5 @@ module.exports = {
   getDetailDoctorById,
   bulkCreateSchedule,
   getSchedulesByDate,
+  getExtraInfoDoctorById,
 };

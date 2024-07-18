@@ -40,6 +40,10 @@ const initWebRoutes = (app) => {
     "/api/get-schedule-doctor-by-date",
     doctorController.getSchedulesByDate
   );
+  router.get(
+    "/api/get-extra-info-doctor-by-id",
+    doctorController.getExtraInfoDoctorById
+  );
 
   return app.use("/", router);
 };
