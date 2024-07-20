@@ -357,7 +357,7 @@ const getExtraInfoDoctorById = async (doctorID) => {
         DT: [], // data
       };
     } else {
-      console.log("doctorID: ", doctorID);
+      // console.log("doctorID: ", doctorID);
       let data = await db.Doctor_Info.findOne({
         where: { doctorID: doctorID },
         attributes: {
@@ -401,6 +401,81 @@ const getExtraInfoDoctorById = async (doctorID) => {
   }
 };
 
+const getProfileDoctorById = async (doctorID) => {
+  try {
+    if (!doctorID) {
+      return {
+        EM: "missing required parameters", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      // console.log("doctorID: ", doctorID);
+      let data = await db.User.findOne({
+        where: { id: doctorID },
+        attributes: {
+          exclude: ["passWord"], // không lấy
+        },
+        include: [
+          {
+            model: db.Markdown,
+            attributes: ["contentHTML", "contentMarkdown", "description"],
+          },
+          {
+            model: db.AllCodes,
+            as: "positionData",
+            attributes: ["valueEn", "valueVi"], // chỉ lấy
+          },
+          {
+            model: db.Doctor_Info,
+            attributes: {
+              exclude: ["id", "doctorID"], // không lấy
+            },
+            include: [
+              {
+                model: db.AllCodes,
+                as: "priceTypeData",
+                attributes: ["valueEn", "valueVi"],
+              },
+              {
+                model: db.AllCodes,
+                as: "provinceTypeData",
+                attributes: ["valueEn", "valueVi"],
+              },
+              {
+                model: db.AllCodes,
+                as: "paymentTypeData",
+                attributes: ["valueEn", "valueVi"],
+              },
+            ],
+          },
+        ],
+        raw: false, // dùng .save phải có raw: false -> không dùng vì không muốn lấy markdown khi find không có
+        nest: true, // đưa bảng join vào obj
+      });
+
+      // ảnh
+      // chuyển trực tiếp bên BE
+      if (data && data.image) {
+        data.image = Buffer.from(data.image, "base64").toString("binary"); // chuyển từ base64 sang Blob
+      }
+
+      if (!data) data = {};
+      return {
+        EM: "get data doctor success", //error message
+        EC: 0, //error code
+        DT: data, // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err getProfileDoctorById: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
 module.exports = {
   getTopDoctorHome,
   getAllDoctors,
@@ -409,4 +484,5 @@ module.exports = {
   bulkCreateSchedule,
   getSchedulesByDate,
   getExtraInfoDoctorById,
+  getProfileDoctorById,
 };

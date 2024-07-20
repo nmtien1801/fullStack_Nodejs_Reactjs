@@ -133,6 +133,23 @@ const getExtraInfoDoctorById = async (req, res) => {
   }
 };
 
+const getProfileDoctorById = async (req, res) => {
+  try {
+    let data = await doctorService.getProfileDoctorById(+req.query.doctorID); // có ? nên dùng req.query
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err getDetailDoctorById: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
+    });
+  }
+};
 module.exports = {
   getDoctorHome,
   getAllDoctor,
@@ -141,4 +158,5 @@ module.exports = {
   bulkCreateSchedule,
   getSchedulesByDate,
   getExtraInfoDoctorById,
+  getProfileDoctorById
 };
