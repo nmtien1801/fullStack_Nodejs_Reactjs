@@ -17,7 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       doctorId: DataTypes.INTEGER,
       patientId: DataTypes.INTEGER,
       date: DataTypes.DATE,
-      dateType: DataTypes.STRING,
+      timeType: DataTypes.STRING,
+      token: DataTypes.STRING, // dùng để tạo link <a> khi click vào trạng thái sẽ chuyển (chờ -> xác nhận)
     },
     {
       sequelize,

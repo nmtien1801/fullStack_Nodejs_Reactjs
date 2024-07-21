@@ -2,16 +2,31 @@ import db from "../models/index";
 require("dotenv").config(); // dùng env
 import _, { find, includes } from "lodash";
 import { Find_ConvertDateToTimeStampSchedule } from "../config/find_ConvertDate";
+import emailService from "./emailService";
 
 const postBookAppointment = async (dataInput) => {
   try {
-    console.log(">>>check dataInput: ", dataInput.email);
     if (
       dataInput.email &&
       dataInput.doctorID &&
       dataInput.date &&
-      dataInput.timeType
+      dataInput.timeType &&
+      dataInput.fullName
     ) {
+      // gửi email khi tạo thành công patient
+      await emailService.sendSimpleEmail({
+        receiverEmail: dataInput.email,
+        patientName: dataInput.fullName, // tên bệnh nhân
+        doctorName: dataInput.doctorName, // tên bác sĩ
+        time: dataInput.timeString, // thời gian
+        language: dataInput.language, // ngôn ngữ
+
+        // chuyển trạng thái chờ
+        // link xác nhận -> cần lưu token bên db để FE có thể click
+        // link này sẽ gửi (FE) request lên (BE) để thay đổi trạng thái booking (đang chờ -> xác nhận)
+        redirectLink: "https://www.youtube.com/@TienNguyen-fu4is",
+      });
+
       // upsert patient
       // upsert: nếu có thì update, không có thì insert
       // findOrCreate return array [data, boolean(created)] -> chỉ lấy obj data thì cần user[0]

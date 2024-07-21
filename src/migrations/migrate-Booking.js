@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Bookings", {
+    await queryInterface.createTable("Booking", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -20,7 +20,10 @@ module.exports = {
       date: {
         type: Sequelize.DATE,
       },
-      dateType: {
+      timeType: {
+        type: Sequelize.STRING,
+      },
+      token: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -34,6 +37,8 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Bookings");
+    await queryInterface.dropTable("Booking");
   },
 };
+
+// npx sequelize-cli db:migrate --to migrate-Booking.js

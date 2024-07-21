@@ -315,6 +315,12 @@ const getSchedulesByDate = async (doctorID, date) => {
             as: "timeTypeData",
             attributes: ["valueEn", "valueVi"],
           },
+
+          {
+            model: db.User,
+            as: "doctorData",
+            attributes: ["userName"],
+          },
         ],
         raw: true,
         nest: true, // đưa bảng join vào obj
