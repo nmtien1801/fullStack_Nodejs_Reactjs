@@ -1,6 +1,7 @@
+import e from "express";
 import db from "../models/index";
 require("dotenv").config(); // dùng env
-import _ from "lodash";
+import _, { at } from "lodash";
 
 const createSpecialty = async (data) => {
   try {
@@ -24,8 +25,8 @@ const createSpecialty = async (data) => {
       });
     }
     return {
-      EM: "create the appointment success", //error message
-      EC: 1, //error code
+      EM: "create the specialty success", //error message
+      EC: 0, //error code
       DT: [], // data
     };
   } catch (error) {
@@ -38,6 +39,37 @@ const createSpecialty = async (data) => {
   }
 };
 
+const getAllSpecialty = async () => {
+  try {
+    let data = await db.Specialties.findAll();
+
+    // ảnh
+    // chuyển trực tiếp bên BE
+    if (data && data.length > 0) {
+      data.map((item) => {
+        if (item.image) {
+          item.image = Buffer.from(item.image, "base64").toString("binary"); // chuyển từ base64 sang Blob
+        }
+      });
+    }
+
+    if (!data) data = {}; // ép cứng điều kiện luôn có data để đỡ check đk bên FE
+    return {
+      EM: "get specialty success", //error message
+      EC: 0, //error code
+      DT: data, // data
+    };
+  } catch (error) {
+    console.log(">>>check err getAllSpecialty: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 module.exports = {
   createSpecialty,
+  getAllSpecialty,
 };

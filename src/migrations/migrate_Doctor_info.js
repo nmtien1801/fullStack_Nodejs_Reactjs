@@ -9,8 +9,14 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       doctorID: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false,
+      },
+      specialtyID: {
+        type: Sequelize.INTEGER,
+      },
+      clinicID: {
+        type: Sequelize.INTEGER,
       },
       priceID: {
         type: Sequelize.STRING,
@@ -55,4 +61,4 @@ module.exports = {
   },
 };
 
-//npx sequelize-cli db:migrate --to migrate_Doctor_info.js
+// npx sequelize-cli db:migrate --to migrate_Doctor_info.js

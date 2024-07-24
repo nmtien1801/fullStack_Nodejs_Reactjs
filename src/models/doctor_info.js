@@ -33,6 +33,8 @@ module.exports = (sequelize, DataTypes) => {
   Doctor_Info.init(
     {
       doctorID: DataTypes.INTEGER,
+      specialtyID: DataTypes.INTEGER,
+      clinicID: DataTypes.INTEGER,
       priceID: DataTypes.STRING,
       provinceID: DataTypes.STRING,
       paymentID: DataTypes.STRING,
