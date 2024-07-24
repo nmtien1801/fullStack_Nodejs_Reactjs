@@ -12,8 +12,9 @@ module.exports = (sequelize, DataTypes) => {
   Specialties.init(
     {
       name: DataTypes.STRING,
-      description: DataTypes.TEXT,
-      image: DataTypes.STRING,
+      image: DataTypes.STRING, // dùng string để hứng blob đã lưu trong db
+      descriptionHTML: DataTypes.TEXT,
+      descriptionMarkdown: DataTypes.TEXT,
     },
     {
       sequelize,

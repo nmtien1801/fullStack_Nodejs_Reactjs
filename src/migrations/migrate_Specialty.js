@@ -1,7 +1,7 @@
 "use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable("Role", {
+    await queryInterface.createTable("Specialties", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,9 +12,12 @@ module.exports = {
         type: Sequelize.STRING,
       },
       image: {
-        type: Sequelize.STRING,
+        type: Sequelize.BLOB("long"),
       },
-      description: {
+      descriptionHTML: {
+        type: Sequelize.TEXT,
+      },
+      descriptionMarkdown: {
         type: Sequelize.TEXT,
       },
 
@@ -29,6 +32,8 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
-    await queryInterface.dropTable("Role");
+    await queryInterface.dropTable("Specialties");
   },
 };
+
+// npx sequelize-cli db:migrate --to migrate_Specialty.js

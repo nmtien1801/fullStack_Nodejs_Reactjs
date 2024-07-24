@@ -4,6 +4,7 @@ import apiController from "../controller/apiController";
 import userController from "../controller/userController";
 import doctorController from "../controller/doctorController";
 import patientController from "../controller/patientController";
+import specialtyController from "../controller/specialtyController";
 
 const router = express.Router(); // bằng app = express();
 /**
@@ -53,7 +54,11 @@ const initWebRoutes = (app) => {
     "/api/patient-book-appointment",
     patientController.postBookAppointment
   );
-
+  router.post(
+    "/api/verify-book-appointment",
+    patientController.postVerifyBookAppointment
+  );
+  router.post("/api/create-new-specialty", specialtyController.createSpecialty);
   return app.use("/", router);
 };
 

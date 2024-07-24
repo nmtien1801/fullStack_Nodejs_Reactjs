@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING,
       address: DataTypes.STRING, // key của allcode
       description: DataTypes.TEXT,
-      image: DataTypes.STRING,
+      image: DataTypes.STRING, // dùng string để hứng blob đã lưu trong db
     },
     {
       sequelize,

@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       phone: DataTypes.STRING,
       groupID: DataTypes.INTEGER,
       positionID: DataTypes.STRING, // add column
-      image: DataTypes.STRING, // add column
+      image: DataTypes.STRING, // add column -> dùng string để hứng blob đã lưu trong db
       roleID: DataTypes.STRING,
     },
     {

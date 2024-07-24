@@ -1,8 +1,15 @@
 import db from "../models/index";
 require("dotenv").config(); // dùng env
-import _, { find, includes } from "lodash";
-import { Find_ConvertDateToTimeStampSchedule } from "../config/find_ConvertDate";
+import _ from "lodash";
 import emailService from "./emailService";
+import { v4 as uuidv4 } from "uuid"; // tạo token
+
+// bug lỗi version npm: [nodemon] app crashed - waiting for file changes before starting...
+
+const buildUrlEmail = (doctorID, token) => {
+  let result = `${process.env.REACT_URL}/verify-booking?token=${token}&doctorID=${doctorID}`;
+  return result;
+};
 
 const postBookAppointment = async (dataInput) => {
   try {
@@ -13,6 +20,9 @@ const postBookAppointment = async (dataInput) => {
       dataInput.timeType &&
       dataInput.fullName
     ) {
+      // tạo token -> đổi trạng thái booking
+      let token = uuidv4(); //  '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
+
       // gửi email khi tạo thành công patient
       await emailService.sendSimpleEmail({
         receiverEmail: dataInput.email,
@@ -24,7 +34,8 @@ const postBookAppointment = async (dataInput) => {
         // chuyển trạng thái chờ
         // link xác nhận -> cần lưu token bên db để FE có thể click
         // link này sẽ gửi (FE) request lên (BE) để thay đổi trạng thái booking (đang chờ -> xác nhận)
-        redirectLink: "https://www.youtube.com/@TienNguyen-fu4is",
+        // không nên truyền patientID vào token email vì nó phải create trước -> bị chậm
+        redirectLink: buildUrlEmail(dataInput.doctorID, token),
       });
 
       // upsert patient
@@ -34,7 +45,7 @@ const postBookAppointment = async (dataInput) => {
         where: { email: dataInput.email },
         defaults: {
           email: dataInput.email,
-          roleId: "R3", // R3: patient
+          roleID: "R3", // R3: patient
         },
       });
 
@@ -50,6 +61,7 @@ const postBookAppointment = async (dataInput) => {
             patientId: user[0].id,
             date: dataInput.date, // ngày : bên FE (3165133) -> tự động convert dang dd/mm/yyyy
             timeType: dataInput.timeType,
+            token: token,
           },
         });
         //   console.log(">>>check user: ", user[0]);
@@ -77,6 +89,53 @@ const postBookAppointment = async (dataInput) => {
   }
 };
 
+const postVerifyBookAppointment = async (dataInput) => {
+  try {
+    if (dataInput.token && dataInput.doctorID) {
+      let appointment = await db.Booking.findOne({
+        where: {
+          token: dataInput.token,
+          doctorId: dataInput.doctorID,
+          statusId: "S1", // chuyển trạng thái khi lấy token từ this.props.match.params.id
+        },
+        raw: false, // dùng .save phải có raw: false
+      });
+
+      // update status
+      if (appointment) {
+        appointment.statusId = "S2";
+        await appointment.save();
+
+        return {
+          EM: "update the appointment success", //error message
+          EC: 0, //error code
+          DT: [], // data
+        };
+      } else {
+        return {
+          EM: "appointment has been active", //error message
+          EC: 1, //error code
+          DT: [], // data
+        };
+      }
+    } else {
+      return {
+        EM: "create the appointment miss", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err postVerifyBookAppointment: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 module.exports = {
   postBookAppointment,
+  postVerifyBookAppointment,
 };
