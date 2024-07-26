@@ -82,7 +82,8 @@ const saveDetailInfoDoctor = async (dataInput) => {
       dataInput.selectedProvince ||
       dataInput.nameClinic ||
       dataInput.addressClinic ||
-      dataInput.note
+      dataInput.note ||
+      dataInput.specialtyID
     ) {
       // upsert to Markdown
       if (dataInput.action === "CREATE") {
@@ -110,13 +111,15 @@ const saveDetailInfoDoctor = async (dataInput) => {
         where: { doctorID: dataInput.doctorID },
         raw: false, // dùng .save phải có raw: false
       });
-      console.log("doctorInfo: ", doctorInfo);
+
       if (doctorInfo) {
         //update
         doctorInfo.doctorID = dataInput.doctorID;
         doctorInfo.priceID = dataInput.selectedPrice;
         doctorInfo.provinceID = dataInput.selectedProvince;
         doctorInfo.paymentID = dataInput.selectedPayment;
+        doctorInfo.specialtyID = dataInput.specialtyID;
+        doctorInfo.clinicID = dataInput.clinicID;
         await doctorInfo.save();
       } else {
         //create
@@ -126,6 +129,8 @@ const saveDetailInfoDoctor = async (dataInput) => {
           priceID: dataInput.selectedPrice,
           provinceID: dataInput.selectedProvince,
           paymentID: dataInput.selectedPayment,
+          specialtyID: dataInput.specialtyID,
+          clinicID: dataInput.clinic,
         });
       }
       return {
@@ -306,7 +311,7 @@ const getSchedulesByDate = async (doctorID, date) => {
       let exists = await db.Schedules.findAll({
         where: {
           doctorID: doctorID,
-          date: date,
+          date: date, // 21563016
         },
         attributes: ["timeType", "date", "doctorID", "maxNumber"],
         include: [

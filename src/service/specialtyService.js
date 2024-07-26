@@ -2,6 +2,8 @@ import e from "express";
 import db from "../models/index";
 require("dotenv").config(); // dùng env
 import _, { at } from "lodash";
+import { where } from "sequelize/dist/index.js";
+import { raw } from "body-parser";
 
 const createSpecialty = async (data) => {
   try {
@@ -69,7 +71,66 @@ const getAllSpecialty = async () => {
   }
 };
 
+// tìm 2 bảng doctor_info và specialties
+const getDetailSpecialtyById = async (inputID, location) => {
+  try {
+    if (!inputID || !location) {
+      return {
+        EM: "missing fields",
+        EC: 1,
+        DT: [],
+      };
+    } else {
+      let data = await db.Specialties.findOne({
+        where: {
+          id: inputID,
+        },
+        attributes: ["descriptionHTML", "descriptionMarkdown"],
+        raw: true,
+      });
+
+      if (data) {
+        let doctorSpecialty = [];
+        if (location === "ALL") {
+          doctorSpecialty = await db.Doctor_Info.findAll({
+            where: {
+              specialtyID: inputID,
+            },
+            attributes: ["doctorID", "provinceID"],
+            raw: true,
+          });
+        } else {
+          // location khác ALL
+          doctorSpecialty = await db.Doctor_Info.findAll({
+            where: {
+              specialtyID: inputID,
+              provinceID: location,
+            },
+            attributes: ["doctorID", "provinceID"],
+            raw: true,
+          });
+        }
+
+        data.doctorSpecialty = doctorSpecialty;
+      } else data = {};
+      return {
+        EM: "get getDetailSpecialtyById success", //error message
+        EC: 0, //error code
+        DT: data, // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err getDetailSpecialtyById: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 module.exports = {
   createSpecialty,
   getAllSpecialty,
+  getDetailSpecialtyById,
 };
