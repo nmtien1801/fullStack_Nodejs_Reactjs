@@ -14,11 +14,14 @@ module.exports = {
       address: {
         type: Sequelize.STRING,
       },
-      description: {
+      descriptionHTML: {
+        type: Sequelize.TEXT,
+      },
+      descriptionMarkdown: {
         type: Sequelize.TEXT,
       },
       image: {
-        type: Sequelize.STRING,
+        type: Sequelize.BLOB("long"),
       },
 
       createdAt: {
@@ -35,3 +38,5 @@ module.exports = {
     await queryInterface.dropTable("Clinics");
   },
 };
+
+// npx sequelize-cli db:migrate --to migrate_Clinics.js
