@@ -9,6 +9,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // sequelize defind relationship stackoverflow
+      Booking.belongsTo(models.User, {
+        foreignKey: "patientId",
+        targetKey: "id",
+        as: "patientData",
+      });
+
+      Booking.belongsTo(models.AllCodes, {
+        foreignKey: "timeType",
+        targetKey: "keyMap",
+        as: "timeTypeDataPatient", // trùng tên: You have used the alias ${options.as} in two separate associations
+      });
     }
   }
   Booking.init(

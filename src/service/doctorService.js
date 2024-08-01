@@ -83,7 +83,8 @@ const saveDetailInfoDoctor = async (dataInput) => {
       dataInput.nameClinic ||
       dataInput.addressClinic ||
       dataInput.note ||
-      dataInput.specialtyID
+      dataInput.specialtyID ||
+      dataInput.clinicID
     ) {
       // upsert to Markdown
       if (dataInput.action === "CREATE") {
@@ -295,7 +296,6 @@ const bulkCreateSchedule = async (data) => {
 
 const getSchedulesByDate = async (doctorID, date) => {
   try {
-    // console.log("doctorID: ", doctorID, "date: ", date);
     if (!doctorID || !date) {
       return {
         EM: "missing required parameters", //error message
@@ -343,7 +343,7 @@ const getSchedulesByDate = async (doctorID, date) => {
         };
       } else {
         return {
-          EM: "get data doctor success", //error message
+          EM: "get data doctor success but not data", //error message
           EC: 0, //error code
           DT: [], // data
         };
@@ -487,6 +487,80 @@ const getProfileDoctorById = async (doctorID) => {
     };
   }
 };
+
+const getListPatientForDoctor = async (doctorID, date) => {
+  try {
+    if (!doctorID || !date) {
+      return {
+        EM: "missing required parameters", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      // console.log("doctorID: ", doctorID, "date: ", date);
+      // ==================================================================================
+      // tạo nhiều bị trùng
+      // tìm tất cả schedule của bác sĩ theo ngày
+      // search: how to get difference between two arrays of objects javascript
+      let exists = await db.Booking.findAll({
+        where: {
+          statusId: "S2", // đây là trạng thái đã xác nhận khi patient click vào link email -> vì bác sĩ cần kiểm soát những client này
+          doctorId: doctorID,
+          date: date,
+        },
+
+        include: [
+          {
+            model: db.User,
+            as: "patientData", // you must use the 'as'
+            attributes: ["userName", "email", "sex", "address"],
+            include: [
+              {
+                model: db.AllCodes,
+                as: "genderData",
+                attributes: ["valueEn", "valueVi"],
+              },
+            ],
+          },
+          {
+            model: db.AllCodes,
+            as: "timeTypeDataPatient",
+            attributes: ["valueEn", "valueVi"],
+          },
+        ],
+        raw: true, // dùng .save phải có raw: false
+        nest: true, // đưa bảng join vào obj
+      });
+
+      let convertDateToTimeStamp = await Find_ConvertDateToTimeStampSchedule(
+        exists
+      );
+
+      if (convertDateToTimeStamp && convertDateToTimeStamp.length > 0) {
+        return {
+          EM: "get data getListPatientForDoctor success", //error message
+          EC: 0, //error code
+          DT: convertDateToTimeStamp, // data
+        };
+      } else {
+        // if (!data) data = {};
+        return {
+          EM: "get data doctor success but not data", //error message
+          EC: 0, //error code
+          DT: [], // data
+        };
+      }
+    }
+  } catch (error) {
+    console.log(">>>check err getListPatientForDoctor: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
+
 module.exports = {
   getTopDoctorHome,
   getAllDoctors,
@@ -496,4 +570,5 @@ module.exports = {
   getSchedulesByDate,
   getExtraInfoDoctorById,
   getProfileDoctorById,
+  getListPatientForDoctor,
 };

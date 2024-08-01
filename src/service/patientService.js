@@ -18,7 +18,9 @@ const postBookAppointment = async (dataInput) => {
       dataInput.doctorID &&
       dataInput.date &&
       dataInput.timeType &&
-      dataInput.fullName
+      dataInput.fullName &&
+      dataInput.selectedGender &&
+      dataInput.address
     ) {
       // tạo token -> đổi trạng thái booking
       let token = uuidv4(); //  '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
@@ -46,6 +48,11 @@ const postBookAppointment = async (dataInput) => {
         defaults: {
           email: dataInput.email,
           roleID: "R3", // R3: patient
+          sex: dataInput.selectedGender,
+          address: dataInput.address,
+          userName: dataInput.fullName,
+          phone: dataInput.phoneNumber,
+          groupID: 2, // mặc định đầy đủ quyền jwt
         },
       });
 

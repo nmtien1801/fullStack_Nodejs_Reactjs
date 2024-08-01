@@ -114,6 +114,7 @@ const handleUserLogin = async (rawData) => {
           EM: "ok!",
           EC: 0,
           DT: {
+            _id: user.id, // dùng để lấy patient của doctor này
             access_token: token,
             refreshToken: tokenRefresh,
             groupWithRole: groupWithRole,

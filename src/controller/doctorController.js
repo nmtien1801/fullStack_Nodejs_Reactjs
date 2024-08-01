@@ -150,6 +150,28 @@ const getProfileDoctorById = async (req, res) => {
     });
   }
 };
+
+const getListPatientForDoctor = async (req, res) => {
+  try {
+    let data = await doctorService.getListPatientForDoctor(
+      +req.query.doctorID,
+      +req.query.date // bug: value provided is not in a recognized RFC2822 or ISO format -> thêm +
+    ); // có ? nên dùng req.query
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err getListPatientForDoctor: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   getDoctorHome,
   getAllDoctor,
@@ -158,5 +180,6 @@ module.exports = {
   bulkCreateSchedule,
   getSchedulesByDate,
   getExtraInfoDoctorById,
-  getProfileDoctorById
+  getProfileDoctorById,
+  getListPatientForDoctor,
 };
