@@ -51,7 +51,7 @@ const getAllClinic = async () => {
     if (data && data.length > 0) {
       data.map((item) => {
         if (item.image) {
-          item.image = Buffer.from(item.image, "base64").toString("binary"); // chuyển từ base64 sang Blob
+          item.image = Buffer.from(item.image, "base64").toString("binary"); // ảnh chuyển từ base64 sang Blob
         }
       });
     }

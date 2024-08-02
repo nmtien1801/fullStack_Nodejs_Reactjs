@@ -5,6 +5,7 @@ require("dotenv").config(); // dùng env
 import _, { find, includes } from "lodash";
 import e from "express";
 import { Find_ConvertDateToTimeStampSchedule } from "../config/find_ConvertDate";
+import { sendAttachmentEmail } from "./emailService";
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 const getTopDoctorHome = async (limit) => {
@@ -561,6 +562,51 @@ const getListPatientForDoctor = async (doctorID, date) => {
   }
 };
 
+const sendRemedy = async (data) => {
+  try {
+    if (!data.email || !data.doctorID || !data.patientID || !data.timeType) {
+      return {
+        EM: "missing required parameters", //error message
+        EC: 1, //error code
+        DT: [], // data
+      };
+    } else {
+      //update patient status
+      let appointment = await db.Booking.findOne({
+        where: {
+          doctorId: data.doctorID,
+          patientId: data.patientID,
+          timeType: data.timeType,
+          // đây là trạng thái patient đã click vào link xác nhận -> bác sĩ nhận đc và gửi đơn thuốc
+          statusId: "S2",
+        },
+        raw: false, // dùng .save phải có raw: false
+      });
+
+      if (appointment) {
+        appointment.statusId = "S3";
+        await appointment.save();
+      }
+
+      // send email remedy
+      // gửi ảnh về email
+      await sendAttachmentEmail(data);
+
+      return {
+        EM: "send sendRemedy success", //error message
+        EC: 0, //error code
+        DT: [], // data
+      };
+    }
+  } catch (error) {
+    console.log(">>>check err sendRemedy: ", error);
+    return {
+      EM: "some thing wrongs with service", //error message
+      EC: 2, //error code
+      DT: [], // data
+    };
+  }
+};
 module.exports = {
   getTopDoctorHome,
   getAllDoctors,
@@ -571,4 +617,5 @@ module.exports = {
   getExtraInfoDoctorById,
   getProfileDoctorById,
   getListPatientForDoctor,
+  sendRemedy,
 };

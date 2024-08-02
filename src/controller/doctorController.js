@@ -172,6 +172,23 @@ const getListPatientForDoctor = async (req, res) => {
   }
 };
 
+const sendRemedy = async (req, res) => {
+  try {
+    let data = await doctorService.sendRemedy(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console.log(">>>check err sendRemedy: ", error);
+    return res.status(500).json({
+      EM: "error from sever",
+      EC: 2,
+      DT: "",
+    });
+  }
+};
 module.exports = {
   getDoctorHome,
   getAllDoctor,
@@ -182,4 +199,5 @@ module.exports = {
   getExtraInfoDoctorById,
   getProfileDoctorById,
   getListPatientForDoctor,
+  sendRemedy,
 };

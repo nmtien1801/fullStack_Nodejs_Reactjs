@@ -78,6 +78,7 @@ const initWebRoutes = (app) => {
     "/api/get-list-patient-for-doctor",
     doctorController.getListPatientForDoctor
   );
+  router.post("/api/send-remedy", doctorController.sendRemedy); // gửi email toa thuốc
 
   return app.use("/", router);
 };
