@@ -1,12 +1,14 @@
 "use strict";
 require("dotenv").config(); // có file env nên cài vào cho khỏi lỗi
+const { time } = require("console");
+const { query } = require("express");
 const fs = require("fs");
 const path = require("path");
 const Sequelize = require("sequelize");
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || "development";
-const config = require(__dirname + "/../config/config.json")[env];
 const db = {};
+const config = require(__dirname + "/../config/config.js")[env];
 
 let sequelize;
 if (config.use_env_variable) {
@@ -19,6 +21,26 @@ if (config.use_env_variable) {
     config
   );
 }
+
+// ======> thay vì lấy thông tin qua file config.json thì trực tiếp qua .env
+// let sequelize;
+// const customizeConfig = {
+//   host: process.env.DB_HOST,
+//   port: process.env.DB_PORT,
+//   dialect: process.env.DB_DIALECT,
+//   logging: false,
+//   query: {
+//     raw: true,
+//   },
+//   timezone: "+07:00",
+// };
+// sequelize = new Sequelize(
+//   process.env.DB_DATABASE_NAME,
+//   process.env.DB_USERNAME,
+//   process.env.DB_PASSWORD,
+//   customizeConfig
+// );
+// =============================================================================
 
 fs.readdirSync(__dirname)
   .filter((file) => {

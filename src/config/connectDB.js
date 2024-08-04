@@ -1,10 +1,23 @@
 const { Sequelize } = require("sequelize");
+require("dotenv").config();
 
-// connect DB
-const sequelize = new Sequelize("jwt", "root", null, {
-  host: "localhost",
-  dialect: "mysql",
-});
+// connect DB (dataBaseName, userName, password, {host, dialect})
+// dùng cho mySql
+const sequelize = new Sequelize(
+  process.env.DB_DATABASE_NAME,
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
+    query: {
+      raw: true,
+    },
+    timezone: "+07:00",
+  }
+);
 
 //test connect
 const connection = async () => {
