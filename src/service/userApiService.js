@@ -249,8 +249,9 @@ const getAllCodeService = async (typeInput) => {
     }
   } catch (error) {
     // err: Table 'jwt.allcode' doesn't exist -> sửa tên model cho giống migration
+    console.log(">>>check err: ", error);
     return {
-      EM: "some thing wrongs with service", //error message
+      EM: "some thing wrongs with service allCode", //error message
       EC: 2, //error code
       DT: [], // data
     };
